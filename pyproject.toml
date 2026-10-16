@@ -1,0 +1,25 @@
+[tool.uv.workspace]
+members = ["apps/api"]
+
+[dependency-groups]
+dev = ["ruff==0.15.20", "mypy==2.1.0", "pytest==9.1.1", "httpx==0.28.1"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+cache-dir = ".cache/ruff"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"apps/api/tests/*.py" = ["S101"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+cache_dir = ".cache/mypy"
+
+[[tool.mypy.overrides]]
+module = ["authlib.*"]
+ignore_missing_imports = true

@@ -1,0 +1,67 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #172e3d;
+  background: #f3f6f8;
+  line-height: 1.6;
+}
+body {
+  margin: 0;
+}
+main {
+  max-width: 52rem;
+  margin: 3rem auto;
+  padding: 1.5rem;
+}
+h1 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  line-height: 1.15;
+}
+h2 {
+  margin-top: 2rem;
+}
+aside {
+  border-left: 0.3rem solid #a95d00;
+  padding: 1rem;
+  background: #fff2d8;
+}
+.eyebrow {
+  color: #405c70;
+  font-weight: 650;
+}
+[role="status"] {
+  padding: 1rem;
+  background: white;
+  border: 1px solid #cedae2;
+}
+.auth-panel {
+  padding: 1.5rem;
+  border: 1px solid #cedae2;
+  background: white;
+  border-radius: 0.5rem;
+}
+.button,
+button {
+  display: inline-block;
+  padding: 0.8rem 1.2rem;
+  background: #174c6a;
+  color: white;
+  border: 0;
+  border-radius: 0.3rem;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+.button:focus-visible,
+button:focus-visible {
+  outline: 0.2rem solid #a95d00;
+  outline-offset: 0.2rem;
+}
+button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+[role="alert"] {
+  padding: 1rem;
+  background: #fff2d8;
+  border-left: 0.3rem solid #a95d00;
+}

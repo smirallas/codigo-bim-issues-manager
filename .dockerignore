@@ -1,0 +1,24 @@
+# Send only dependency manifests and application sources to the builder.
+**
+!package.json
+!pnpm-workspace.yaml
+!pnpm-lock.yaml
+!.npmrc
+!pyproject.toml
+!uv.lock
+!apps/
+!apps/**
+**/.env
+**/.env.*
+**/node_modules
+**/dist
+**/build
+**/coverage
+**/__pycache__
+**/data
+**/*.db
+**/*.db-*
+**/*.sqlite*
+**/*.log
+**/*.pem
+**/*.key

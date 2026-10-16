@@ -1,0 +1,24 @@
+FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 AS build
+WORKDIR /workspace
+RUN corepack enable && corepack prepare pnpm@9.15.9 --activate
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
+COPY apps/web/package.json apps/web/package.json
+COPY apps/mcp/package.json apps/mcp/package.json
+RUN pnpm install --frozen-lockfile
+COPY apps/web apps/web
+COPY apps/mcp apps/mcp
+RUN pnpm build
+
+FROM build AS web
+RUN mkdir -p /workspace/apps/web/node_modules/.vite-temp \
+    && chown node:node /workspace/apps/web/node_modules/.vite-temp
+USER node
+WORKDIR /workspace/apps/web
+EXPOSE 5173
+CMD ["node", "node_modules/vite/bin/vite.js", "preview", "--host", "0.0.0.0"]
+
+FROM build AS mcp
+USER node
+WORKDIR /workspace/apps/mcp
+EXPOSE 8001
+CMD ["node", "dist/index.js"]

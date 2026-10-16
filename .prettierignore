@@ -1,0 +1,8 @@
+pnpm-lock.yaml
+uv.lock
+.cache
+.venv
+**/dist
+**/node_modules
+**/__pycache__
+**/data

@@ -1,0 +1,43 @@
+import assert from "node:assert/strict";
+import { createRequire } from "node:module";
+import { pathToFileURL } from "node:url";
+
+const require = createRequire(
+  new URL("../apps/mcp/package.json", import.meta.url),
+);
+const { Client } = await import(
+  pathToFileURL(require.resolve("@modelcontextprotocol/sdk/client/index.js"))
+    .href
+);
+const { StreamableHTTPClientTransport } = await import(
+  pathToFileURL(
+    require.resolve("@modelcontextprotocol/sdk/client/streamableHttp.js"),
+  ).href
+);
+
+// Solo puertos locales; nunca consulta Autodesk ni envía escrituras de negocio.
+for (const url of [
+  "http://127.0.0.1:8000/ready",
+  "http://127.0.0.1:5173/api/ready",
+  "http://127.0.0.1:8001/ready",
+]) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  assert.equal(response.status, 200, url);
+  assert.equal((await response.json()).status, "ready", url);
+  console.info(`OK ${url}`);
+}
+const html = await fetch("http://127.0.0.1:5173").then((r) => r.text());
+assert.match(html, /Issues Manager/);
+const client = new Client({
+  name: "issue-manager-e00-smoke",
+  version: "0.0.0",
+});
+try {
+  await client.connect(
+    new StreamableHTTPClientTransport(new URL("http://127.0.0.1:8001/mcp")),
+  );
+  assert.deepEqual((await client.listTools()).tools, []);
+  console.info("OK Streamable HTTP: initialize + tools/list (empty)");
+} finally {
+  await client.close();
+}
