@@ -10,11 +10,14 @@ from sqlalchemy.exc import OperationalError, SQLAlchemyError
 
 from app.auth.provider import AutodeskProvider
 from app.auth.router import router as auth_router
-from app.auth.service import AuthService
+from app.auth.service import AuthFailure, AuthService
 from app.config import Settings
 from app.database import check_database, create_database_engine
 from app.logging import protect_access_logs
 from app.migrations import migrate_database
+from app.projects.router import auth_error, project_error
+from app.projects.router import router as projects_router
+from app.projects.service import ProjectFailure, ProjectService
 
 
 class HealthResponse(BaseModel):
@@ -31,7 +34,7 @@ def create_app(
     settings: Settings | None = None,
     provider_transport: httpx.BaseTransport | None = None,
 ) -> FastAPI:
-    """Compone E01; el transporte inyectable permite probar OAuth sin credenciales reales."""
+    """Compone E02; el transporte inyectable permite probar APS sin credenciales reales."""
     config = settings or Settings()
 
     @asynccontextmanager
@@ -43,6 +46,7 @@ def create_app(
             app.state.auth_service = AuthService(
                 engine, config, AutodeskProvider(config, provider_transport)
             )
+            app.state.project_service = ProjectService(provider_transport)
             yield
         finally:
             engine.dispose()
@@ -50,6 +54,9 @@ def create_app(
     app = FastAPI(title="Issues Manager API", version="0.0.0", lifespan=lifespan)
     protect_access_logs()
     app.include_router(auth_router)
+    app.include_router(projects_router)
+    app.add_exception_handler(ProjectFailure, project_error)  # type: ignore[arg-type]
+    app.add_exception_handler(AuthFailure, auth_error)  # type: ignore[arg-type]
 
     @app.exception_handler(OperationalError)
     async def database_busy(_request: Request, _error: OperationalError) -> JSONResponse:
@@ -60,7 +67,7 @@ def create_app(
         request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
         response = await call_next(request)
-        if request.url.path.startswith("/auth/"):
+        if request.url.path.startswith(("/auth/", "/projects/")):
             response.headers["Cache-Control"] = "no-store"
             response.headers["Referrer-Policy"] = "no-referrer"
             response.headers["X-Content-Type-Options"] = "nosniff"

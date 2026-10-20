@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { checkApiHealth, type ApiStatus } from "./health";
 import { authMessages, disconnect, loadAuth, type AuthState } from "./auth";
+import { ProjectBrowser } from "./ProjectBrowser";
 
 const statusText: Record<ApiStatus, string> = {
   loading: "Comprobando la API…",
@@ -56,7 +57,7 @@ export function App() {
 
   return (
     <main>
-      <p className="eyebrow">Código BIM · E01</p>
+      <p className="eyebrow">Código BIM · E02</p>
       <h1>Issues Manager</h1>
       <aside aria-label="Aviso de demostración">
         <strong>Demostración técnica en desarrollo.</strong> Las operaciones
@@ -110,10 +111,11 @@ export function App() {
           </button>
         </section>
       )}
+      {auth.status === "authenticated" && <ProjectBrowser />}
       <p role="status">{statusText[status]}</p>
       <p>
-        E01 permite gestionar tu sesión. La consulta de proyectos y las
-        incidencias se implementarán en entregas posteriores.
+        Puedes iniciar sesión y seleccionar un proyecto accesible. Las
+        operaciones con incidencias se incorporarán en entregas posteriores.
       </p>
     </main>
   );

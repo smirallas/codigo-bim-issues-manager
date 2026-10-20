@@ -6,7 +6,19 @@ FastAPI concentra el intercambio OAuth. La web recibe una sesión, nunca tokens 
 http://127.0.0.1:8000/auth/autodesk/callback
 ```
 
-No mezcles `localhost` y `127.0.0.1`: el navegador debe enviar la cookie del intento OAuth al mismo hostname. El scope de esta versión es `user-profile:read`; no solicita acceso a proyectos ni escrituras.
+No mezcles `localhost` y `127.0.0.1`: el navegador debe enviar la cookie del intento OAuth al mismo hostname. Esta versión solicita `user-profile:read data:read`: identidad y lectura de datos. No solicita escrituras. La etiqueta del primer artículo conserva el permiso de identidad original.
+
+## Habilitar la consulta de proyectos
+
+Activa Data Management en la aplicación APS. El administrador de la cuenta de construcción debe registrar su Client ID en **Account Admin → Custom integrations** (la ubicación puede variar según el producto). No basta con que el login funcione: el usuario necesita acceso al proyecto y a **Docs → Files**.
+
+Si vienes de la versión de login, desconecta Autodesk e inicia sesión otra vez para aceptar el permiso de lectura. Renovar el token anterior no añade permisos que no hayas consentido. No cambian el callback ni los secretos del archivo `.env`.
+
+El selector muestra hubs de construcción y proyectos con `projectType` igual a `ACC`. Omite proyectos heredados BIM 360, Fusion y otros tipos: sus APIs de incidencias no son intercambiables con las de esta demo. Conserva íntegros los identificadores Data Management, incluido el prefijo `b.`. Seleccionar no escribe en Autodesk ni acredita permisos para crear incidencias.
+
+Una lista vacía sin advertencias indica que la consulta ha terminado sin proyectos compatibles accesibles. Una denegación se muestra como error. Si Autodesk devuelve advertencias, se muestran los resultados disponibles con un aviso de lista posiblemente incompleta, sin afirmar un vacío definitivo. Una advertencia de otra región puede acompañar a hubs válidos. Comprueba consentimiento, habilitación de la integración y acceso a Docs antes de asumir que un proyecto no existe.
+
+Referencias: [consulta oficial de proyectos](https://get-started.aps.autodesk.com/tutorials/acc-issues/data), [tipos de proyectos ACC](https://get-started.aps.autodesk.com/tutorials/acc-admin/data) y [comprobaciones de acceso Autodesk](https://aps.autodesk.com/blog/cant-access-autodesk-docs-api-dont-panic-follow-these-checks).
 
 ## Preparar el archivo privado
 

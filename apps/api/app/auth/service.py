@@ -156,6 +156,13 @@ class AuthService:
         db.execute(delete(WebSession).where(WebSession.id_hash == session_hash))
 
     def session_info(self, session_id: str) -> SessionInfo:
+        return self._validated_session(session_id)[0]
+
+    def authorized_access(self, session_id: str) -> str:
+        """Credencial solo para adaptadores del servidor, tras revalidar la sesión."""
+        return self._validated_session(session_id)[1]
+
+    def _validated_session(self, session_id: str) -> tuple[SessionInfo, str]:
         """Revalida acceso y perfil; serializa la renovación para no reutilizar refresh tokens."""
         self._cipher()
         session_hash = fingerprint(session_id)
@@ -202,7 +209,7 @@ class AuthService:
             raise failure
         if result is None:
             raise AuthFailure("unauthenticated")
-        return result
+        return result, access
 
     def disconnect(self, session_id: str, csrf_token: str) -> bool:
         """Elimina primero el acceso local, aunque la revocación remota no pueda confirmarse."""

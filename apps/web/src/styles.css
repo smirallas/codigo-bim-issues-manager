@@ -65,3 +65,24 @@ button:disabled {
   background: #fff2d8;
   border-left: 0.3rem solid #a95d00;
 }
+label {
+  display: block;
+  margin: 1rem 0;
+}
+
+select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding: 0.6rem;
+  margin-top: 0.4rem;
+  font: inherit;
+}
+
+.project-selection {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-left: 4px solid #176b53;
+  background: #edf8f2;
+  overflow-wrap: anywhere;
+}

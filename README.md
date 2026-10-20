@@ -6,9 +6,10 @@ Ejemplo educativo de la serie de Código BIM sobre las APIs de Autodesk Forma y 
 
 Cada etiqueta conserva el código tal como queda al terminar un artículo. `main` contiene el trabajo más reciente; para seguir un artículo, utiliza la etiqueta que lleva su nombre.
 
-| Artículo                                                   | Código completo al terminarlo                                                                                |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Login con Autodesk en FastAPI: sesión y acceso restringido | [login-autodesk-fastapi](https://github.com/smirallas/codigo-bim-issues-manager/tree/login-autodesk-fastapi) |
+| Artículo                                                    | Código completo al terminarlo                                                                                                                                    |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Login con Autodesk en FastAPI: sesión y acceso restringido  | [login-autodesk-fastapi](https://github.com/smirallas/codigo-bim-issues-manager/tree/login-autodesk-fastapi)                                                     |
+| Consultar tus proyectos de Autodesk con Data Management API | [consultar-proyectos-autodesk-data-management-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/consultar-proyectos-autodesk-data-management-api) |
 
 ```powershell
 git clone https://github.com/smirallas/codigo-bim-issues-manager.git
@@ -20,13 +21,14 @@ La etiqueta identifica una versión reproducible del código, no una certificaci
 
 ## Qué puedes hacer con esta versión
 
-- Iniciar sesión con tu cuenta Autodesk mediante OAuth 3-legged y PKCE, con el permiso `user-profile:read`.
+- Iniciar sesión con tu cuenta Autodesk mediante OAuth 3-legged y PKCE, con los permisos `user-profile:read` y `data:read`.
 - Restringir el acceso por correo o dominio, comprobado en el servidor.
 - Mantener una sesión web, renovar las credenciales y desconectar Autodesk.
 - Conservar los tokens cifrados por conexión en SQLite, con migraciones.
+- Consultar hubs y proyectos ACC/Forma accesibles, y seleccionar un proyecto tras comprobarlo de nuevo en el servidor.
 - Ejecutar pruebas sin credenciales reales y arrancar la base MCP con catálogo vacío.
 
-Todavía no permite consultar proyectos o incidencias, importar Excel ni utilizar herramientas de negocio MCP. El MCP no autentica usuarios y no debe recibir datos privados.
+Esta versión incorpora la consulta y selección de proyectos. La etiqueta `login-autodesk-fastapi` conserva la versión del primer artículo. Todavía no permite consultar o modificar incidencias, importar Excel ni utilizar herramientas de negocio MCP. El MCP no autentica usuarios y no debe recibir datos privados.
 
 ## Arranque local con Docker
 
