@@ -57,7 +57,7 @@ export function App() {
 
   return (
     <main>
-      <p className="eyebrow">Código BIM · E02</p>
+      <p className="eyebrow">Código BIM · E03</p>
       <h1>Issues Manager</h1>
       <aside aria-label="Aviso de demostración">
         <strong>Demostración técnica en desarrollo.</strong> Las operaciones

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { queryProjects, type ResourceList, type Selection } from "./projects";
+import { ProjectMembers } from "./ProjectMembers";
 
 type Listing =
   | { status: "loading" }
@@ -108,8 +109,8 @@ export function ProjectBrowser() {
       <h2 id="projects-title">Elige tu proyecto</h2>
       <p>
         Consultamos los hubs y proyectos accesibles con tu cuenta. La selección
-        comprueba el acceso de lectura; los permisos para incidencias se
-        comprobarán en un paso posterior.
+        comprueba el acceso de lectura; después consultamos los miembros y tus
+        capacidades sobre incidencias.
       </p>
       <button
         onClick={() => {
@@ -180,11 +181,17 @@ export function ProjectBrowser() {
       )}
       {error && <p role="alert">{error}</p>}
       {selection && (
-        <div role="status" className="project-selection">
-          <strong>Proyecto seleccionado: {selection.project.name}</strong>
-          <p>Hub: {selection.hub.name}</p>
-          <p>Acceso de lectura comprobado con Autodesk.</p>
-        </div>
+        <>
+          <div role="status" className="project-selection">
+            <strong>Proyecto seleccionado: {selection.project.name}</strong>
+            <p>Hub: {selection.hub.name}</p>
+            <p>Acceso de lectura comprobado con Autodesk.</p>
+          </div>
+          <ProjectMembers
+            key={`${selection.hub.id}/${selection.project.id}`}
+            selection={selection}
+          />
+        </>
       )}
       <p>
         ¿Falta un proyecto? Comprueba que la aplicación esté habilitada en las

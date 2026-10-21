@@ -14,6 +14,8 @@ from app.auth.service import AuthFailure, AuthService
 from app.config import Settings
 from app.database import check_database, create_database_engine
 from app.logging import protect_access_logs
+from app.members.router import router as members_router
+from app.members.service import MemberService
 from app.migrations import migrate_database
 from app.projects.router import auth_error, project_error
 from app.projects.router import router as projects_router
@@ -34,7 +36,7 @@ def create_app(
     settings: Settings | None = None,
     provider_transport: httpx.BaseTransport | None = None,
 ) -> FastAPI:
-    """Compone E02; el transporte inyectable permite probar APS sin credenciales reales."""
+    """Compone E03; el transporte inyectable permite probar APS sin credenciales reales."""
     config = settings or Settings()
 
     @asynccontextmanager
@@ -47,6 +49,7 @@ def create_app(
                 engine, config, AutodeskProvider(config, provider_transport)
             )
             app.state.project_service = ProjectService(provider_transport)
+            app.state.member_service = MemberService(app.state.project_service, provider_transport)
             yield
         finally:
             engine.dispose()
@@ -55,6 +58,7 @@ def create_app(
     protect_access_logs()
     app.include_router(auth_router)
     app.include_router(projects_router)
+    app.include_router(members_router)
     app.add_exception_handler(ProjectFailure, project_error)  # type: ignore[arg-type]
     app.add_exception_handler(AuthFailure, auth_error)  # type: ignore[arg-type]
 

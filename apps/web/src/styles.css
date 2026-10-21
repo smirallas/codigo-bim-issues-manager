@@ -70,13 +70,21 @@ label {
   margin: 1rem 0;
 }
 
-select {
+select,
+input {
   display: block;
   width: 100%;
   max-width: 100%;
   padding: 0.6rem;
   margin-top: 0.4rem;
   font: inherit;
+  box-sizing: border-box;
+}
+
+.members-panel {
+  margin-block: 2rem;
+  border-top: 1px solid #cedae2;
+  padding-top: 1rem;
 }
 
 .project-selection {

@@ -19,16 +19,19 @@ git switch --detach login-autodesk-fastapi
 
 La etiqueta identifica una versión reproducible del código, no una certificación de producción. [Versiones y comprobaciones](docs/versiones.md).
 
+Miembros y permisos de Autodesk: comprobar responsables con Issues API → [miembros-permisos-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/miembros-permisos-autodesk-issues-api).
+
 ## Qué puedes hacer con esta versión
 
-- Iniciar sesión con tu cuenta Autodesk mediante OAuth 3-legged y PKCE, con los permisos `user-profile:read` y `data:read`.
+- Iniciar sesión con tu cuenta Autodesk mediante OAuth 3-legged y PKCE, con los permisos de lectura `user-profile:read`, `data:read` y `account:read`.
 - Restringir el acceso por correo o dominio, comprobado en el servidor.
 - Mantener una sesión web, renovar las credenciales y desconectar Autodesk.
 - Conservar los tokens cifrados por conexión en SQLite, con migraciones.
 - Consultar hubs y proyectos ACC/Forma accesibles, y seleccionar un proyecto tras comprobarlo de nuevo en el servidor.
+- Consultar miembros y capacidades de Issues por separado, y comprobar un posible responsable por identidad Autodesk sin asignarlo.
 - Ejecutar pruebas sin credenciales reales y arrancar la base MCP con catálogo vacío.
 
-Esta versión incorpora la consulta y selección de proyectos. La etiqueta `login-autodesk-fastapi` conserva la versión del primer artículo. Todavía no permite consultar o modificar incidencias, importar Excel ni utilizar herramientas de negocio MCP. El MCP no autentica usuarios y no debe recibir datos privados.
+Esta versión incorpora miembros y capacidades de Issues. Las etiquetas de los artículos anteriores conservan las versiones de login y selección de proyectos. Todavía no permite consultar o modificar incidencias, importar Excel ni utilizar herramientas de negocio MCP. El MCP no autentica usuarios y no debe recibir datos privados.
 
 ## Arranque local con Docker
 

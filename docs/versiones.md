@@ -11,6 +11,8 @@ El login, la identidad, la denegación, la cancelación, la desconexión y la re
 
 La consulta y selección de un proyecto de ejemplo se han comprobado con APS real, después de habilitar la integración en la cuenta. Una petición directa con un identificador ficticio ha recibido 404. Los casos de vacío definitivo, denegación 403 y paginación se prueban con datos sintéticos; esa prueba no acredita todos los escenarios posibles en Autodesk.
 
+La entrega de miembros y capacidades corresponde a [miembros-permisos-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/miembros-permisos-autodesk-issues-api): consulta Admin, perfil Issues y comprobación de responsables sin escrituras. Lectura y comprobación compatible observadas con una cuenta administradora; la misma identidad, después de bajar a miembro, conserva lectura y queda limitada a asignación dentro de su empresa. Al no tener empresa asignada, la comprobación se bloquea por información insuficiente. Homónimos y empresas distintas se prueban con datos sintéticos; no se ha intentado una escritura de asignación para provocar un rechazo real de Autodesk.
+
 Las etiquetas conservan una implementación, no acreditan preparación para producción ni completan una aceptación pendiente. Publicar código no publica un artículo.
 
 ## Seguir el código de un artículo

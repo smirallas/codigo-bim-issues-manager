@@ -7,12 +7,20 @@ export type ResourceList = {
 export type Selection = { hub: Resource; project: Resource };
 
 export const projectMessages: Record<string, string> = {
+  aps_members_access_denied:
+    "Autodesk ha denegado la lectura de miembros. Revisa el consentimiento account:read y el acceso de esta cuenta a la API Admin; no se utilizará otra identidad.",
+  aps_issues_access_denied:
+    "Autodesk ha denegado la consulta de capacidades de Issues. Revisa el acceso al producto, la integración y el consentimiento de lectura.",
+  assignee_not_found:
+    "Esta persona ya no figura en la lista de miembros consultada.",
+  assignee_ambiguous:
+    "Hay varias coincidencias. Elige una identidad Autodesk concreta; el nombre no basta.",
   unauthenticated: "La sesión ya no está disponible. Vuelve a iniciar sesión.",
   session_expired: "La sesión ha caducado. Vuelve a iniciar sesión.",
   reconnect_required: "Vuelve a conectar tu cuenta Autodesk.",
   access_denied: "Tu cuenta ya no tiene acceso a la demostración.",
   aps_reconnect_required:
-    "Autodesk no acepta el token o sus permisos. Vuelve a conectar tu cuenta y autoriza la lectura de datos.",
+    "Autodesk no acepta el token o sus permisos. Vuelve a conectar tu cuenta y revisa el consentimiento de lectura de datos y miembros.",
   aps_access_denied:
     "Autodesk ha denegado la consulta. Revisa el consentimiento, la integración de la aplicación en la cuenta y tu acceso a Docs.",
   resource_unavailable:
