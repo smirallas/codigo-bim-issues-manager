@@ -17,9 +17,8 @@ import {
 const error = z.object({ code: z.string(), message: z.string() });
 const messages: Record<string, string> = {
   authentication_required:
-    "El acceso a datos reales requiere la autenticación de E07. Para ensayar usa MCP_DATA_MODE=fixtures; solo contiene datos sintéticos.",
-  resource_unavailable:
-    "El recurso no está disponible en este contexto sintético.",
+    "Autoriza el cliente MCP con una sesión Autodesk vigente y una cuenta permitida. El modo fixtures solo contiene datos sintéticos.",
+  resource_unavailable: "El recurso no está disponible para esta conexión.",
   plan_expired:
     "La preparación sintética ha caducado. Prepara otra y revisa su contenido.",
   fixture_limit: "Se ha alcanzado el límite de preparaciones sintéticas.",
@@ -27,7 +26,7 @@ const messages: Record<string, string> = {
     "No se ha podido consultar el contrato de la API. No se reintenta automáticamente.",
   invalid_api_response: "La respuesta no cumple el contrato esperado.",
   human_approval_not_available:
-    "E06 no ejecuta incidencias. La aprobación humana verificable y la ejecución MCP quedan para E08.",
+    "Esta entrega no ejecuta incidencias. La aprobación humana verificable y la ejecución MCP quedan para E08.",
 };
 
 /** Herramientas pequeñas sobre rutas cerradas de FastAPI, sin proxy genérico. */
@@ -41,7 +40,7 @@ export function registerTools(server: McpServer, api?: ContractApi): void {
     run: (args: z.infer<z.ZodObject<S>>) => Promise<unknown>,
   ): void {
     const output = z.object({
-      mode: z.enum(["disabled", "fixtures"]),
+      mode: z.enum(["disabled", "fixtures", "autodesk"]),
       ok: z.boolean(),
       data: data.optional(),
       error: error.optional(),
@@ -49,7 +48,7 @@ export function registerTools(server: McpServer, api?: ContractApi): void {
     server.registerTool(
       name,
       {
-        description: `${description} E06: ensayo sintético; no accede a Autodesk real.`,
+        description: `${description} ${api?.mode === "autodesk" ? "Contexto Autodesk individual; no ejecuta escrituras." : "Ensayo sintético sin datos Autodesk reales."}`,
         inputSchema: input,
         outputSchema: output,
         annotations: {
@@ -65,9 +64,9 @@ export function registerTools(server: McpServer, api?: ContractApi): void {
           if (!api) throw new ContractFailure("authentication_required");
           const parsed = data.safeParse(await run(args));
           value = parsed.success
-            ? { mode: "fixtures", ok: true, data: parsed.data }
+            ? { mode: api.mode ?? "fixtures", ok: true, data: parsed.data }
             : {
-                mode: "fixtures",
+                mode: api.mode ?? "fixtures",
                 ok: false,
                 error: {
                   code: "invalid_api_response",
@@ -82,7 +81,7 @@ export function registerTools(server: McpServer, api?: ContractApi): void {
                 ? "human_approval_not_available"
                 : "upstream_unavailable";
           value = {
-            mode: api ? "fixtures" : "disabled",
+            mode: api ? (api.mode ?? "fixtures") : "disabled",
             ok: false,
             error: { code, message: messages[code] },
           };
@@ -205,7 +204,7 @@ export function registerTools(server: McpServer, api?: ContractApi): void {
   // No enlazar al /execute web: E04 no registra aún aprobación humana independiente para MCP.
   tool(
     "execute_issue_plan",
-    "Contrato reservado: siempre bloqueado en E06. No admite confirmed ni registra aprobación.",
+    "Contrato reservado: siempre bloqueado hasta E08. No admite confirmed ni registra aprobación.",
     z.object({ plan_id: id }).strict(),
     z.object({}),
     false,

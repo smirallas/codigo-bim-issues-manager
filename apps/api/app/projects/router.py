@@ -9,11 +9,28 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 
 
 def credentials(request: Request) -> tuple[ProjectService, str]:
+    if request.url.path.startswith("/mcp-api/"):
+        return request.app.state.project_service, request.state.mcp_identity[1]
     session_id = request.cookies.get(SESSION_COOKIE)
     if not session_id:
         raise AuthFailure("unauthenticated")
     service: ProjectService = request.app.state.project_service
     return service, auth_service(request).authorized_access(session_id)
+
+
+def owner_session(request: Request) -> str:
+    """Mantiene la propiedad de planes web/MCP sobre la misma conexión del usuario."""
+    if request.url.path.startswith("/mcp-api/"):
+        return str(request.state.mcp_identity[0])
+    return request.cookies[SESSION_COOKIE]
+
+
+@router.get("/mcp-identity")
+def mcp_identity(request: Request) -> dict[str, str]:
+    """Comprobación interna sin listar datos de negocio ni exponer credenciales."""
+    if not request.url.path.startswith("/mcp-api/"):
+        raise AuthFailure("unauthenticated")
+    return {"status": "connected"}
 
 
 @router.get("/hubs", response_model=ResourceList)

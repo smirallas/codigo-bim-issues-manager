@@ -96,8 +96,9 @@ export const importReview = z.object({
     .max(25),
 });
 
-/** Puerto de contrato simulado. No recibe cookies, tokens ni usuario del modelo. */
+/** Puerto de la API; la identidad viene del transporte, nunca de argumentos del modelo. */
 export interface ContractApi {
+  readonly mode?: "autodesk";
   request(
     method: "GET" | "POST",
     path: string,

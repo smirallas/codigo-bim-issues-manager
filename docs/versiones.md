@@ -46,3 +46,11 @@ Pase final: 153 pruebas API, 53 web y 8 MCP, 214 en total; formato, lint, tipos,
 Etiqueta `disenar-herramientas-mcp-fastapi`: once contratos por Streamable HTTP, esquemas Zod, rutas cerradas y salidas estructuradas. Modo predeterminado bloqueado; modo fixtures con API interna simulada y página de ensayo HTTP. La preparación, revisión y ejecución bloqueada se han observado en navegador con datos sintéticos. No acredita autenticación MCP ni consultas Autodesk desde MCP, y no hay agente conectado. Guía: [herramientas MCP](herramientas-mcp.md).
 
 La ejecución se mantiene bloqueada porque el endpoint web no conserva una aprobación humana independiente verificable para MCP. La entrega de autenticación sigue pendiente. La web y su conexión Autodesk no se modifican.
+
+## Autenticar el cliente MCP con tu cuenta Autodesk
+
+Etiqueta `autenticar-cliente-mcp-autodesk`: autorización propia del cliente con oidc-provider, PKCE S256, consentimiento y recurso MCP explícito. Token opaco de quince minutos, sin refresh MCP, estado OAuth cifrado persistente y contexto interno de audiencia distinta validado por FastAPI. Las consultas y preparaciones reutilizan la conexión APS de la sesión web del mismo usuario. Ejecución MCP bloqueada; sin agente conectado. [Configuración y recorrido](autenticacion-mcp.md).
+
+Prueba real: consentimiento completado por Sergio, consulta de su hub y listado de Snowdon Towers desde el cliente SDK MCP. Bloqueo de ejecución comprobado. Después de desconectar Autodesk con revocación confirmada, otra consulta MCP fue rechazada cuando su token todavía estaba vigente (más de trece minutos restantes antes de la desconexión). También se observó rechazo de una credencial MCP vencida sin modificar sus fechas. No se crearon ni modificaron incidencias.
+
+Emisor y audiencia incorrectos, PKCE, código reutilizado, cuenta denegada, cambio de conexión, privacidad de planes, dos identidades y persistencia tras reinicio se prueban con datos sintéticos. Estas comprobaciones no sustituyen una prueba real con dos cuentas Autodesk. La caducidad absoluta web de E01 sigue siendo una verificación distinta y pendiente. SQLite de Node 22 conserva su aviso experimental.

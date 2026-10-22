@@ -6,7 +6,7 @@ from app.auth.router import SESSION_COOKIE, auth_service
 from app.auth.service import AuthFailure
 from app.issues.schemas import Issue, IssuesPage, PlanInput, PlanReview, TypeOption, WriteResult
 from app.issues.service import IssueService
-from app.projects.router import credentials
+from app.projects.router import credentials, owner_session
 
 router = APIRouter(prefix="/projects", tags=["issues"])
 CONTEXT = "/hubs/{hub_id}/{project_id}"
@@ -18,6 +18,9 @@ def service(request: Request) -> IssueService:
 
 
 def write_access(request: Request) -> tuple[str, str]:
+    if request.url.path.startswith("/mcp-api/"):
+        identity = request.state.mcp_identity
+        return str(identity[0]), str(identity[1])
     auth = auth_service(request)
     if request.headers.get("origin") != auth.settings.web_origin.rstrip("/"):
         raise AuthFailure("invalid_origin", 403)
@@ -61,7 +64,7 @@ def prepare(request: Request, hub_id: str, project_id: str, body: PlanInput) -> 
 @router.get("/issue-plans/{plan_id}", response_model=PlanReview)
 def review(request: Request, plan_id: str) -> PlanReview:
     credentials(request)
-    return service(request).review(request.cookies[SESSION_COOKIE], plan_id)
+    return service(request).review(owner_session(request), plan_id)
 
 
 @router.post("/issue-plans/{plan_id}/execute", response_model=WriteResult)

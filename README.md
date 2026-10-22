@@ -1,6 +1,6 @@
 # Issues Manager · Código BIM
 
-Ejemplo educativo de la serie de Código BIM sobre las APIs de Autodesk Forma y la gestión de incidencias. React/TypeScript, FastAPI/Python y una base MCP por Streamable HTTP. El MCP ensaya contratos con datos sintéticos; su autenticación y el recorrido con un agente sobre Autodesk real siguen pendientes.
+Ejemplo educativo de la serie de Código BIM sobre las APIs de Autodesk Forma y la gestión de incidencias. React/TypeScript, FastAPI/Python y una base MCP por Streamable HTTP. El MCP ofrece autorización propia del cliente, vinculada a la conexión Autodesk individual de FastAPI. El recorrido con un agente y la ejecución MCP siguen pendientes.
 
 ## Código completo de cada artículo
 
@@ -25,6 +25,8 @@ Crear y actualizar incidencias de Autodesk con Issues API → [crear-actualizar-
 
 Importar incidencias desde Excel con Autodesk Issues API → [importar-incidencias-excel-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/importar-incidencias-excel-autodesk-issues-api).
 
+Autenticar el cliente MCP con tu cuenta Autodesk → [autenticar-cliente-mcp-autodesk](https://github.com/smirallas/codigo-bim-issues-manager/tree/autenticar-cliente-mcp-autodesk).
+
 ## Qué puedes hacer con esta versión
 
 - Iniciar sesión con tu cuenta Autodesk mediante OAuth 3-legged y PKCE, con `user-profile:read`, `data:read`, `account:read` y `data:write`.
@@ -36,9 +38,10 @@ Importar incidencias desde Excel con Autodesk Issues API → [importar-incidenci
 - Consultar tipos activos e incidencias paginadas, preparar una creación y actualizar título, descripción o estado según los permisos de cada incidencia.
 - Importar una plantilla Excel de hasta 25 filas: validar, revisar, aprobar las filas válidas y recuperar resultados sin reenviar las ya procesadas.
 - Revisar una preparación inmutable durante diez minutos antes de confirmar su envío. Se revalidan contexto, permisos y datos; el resultado queda guardado y el mismo plan no vuelve a escribir.
-- Ejecutar pruebas sin credenciales reales y arrancar la base MCP con catálogo vacío.
+- Autorizar un cliente MCP mediante OAuth, PKCE y consentimiento; consultar datos y preparar revisiones con su propia conexión Autodesk.
+- Ejecutar pruebas sin credenciales reales y ensayar los contratos MCP con datos sintéticos.
 
-Esta versión incorpora operaciones individuales con Issues API e importación desde una plantilla Excel. Las etiquetas anteriores conservan su alcance. El MCP expone once contratos, bloqueados por defecto, con modo fixtures sin datos Autodesk. El MCP no autentica usuarios y no debe recibir datos privados. No incluye adjuntos, pushpins, visor, campos personalizados ni eliminación. La actualización de responsable queda fuera; al crear, si se elige uno, se resuelve por identidad Autodesk y se revalida su empresa cuando corresponde.
+Esta versión incorpora operaciones individuales con Issues API e importación desde una plantilla Excel. Las etiquetas anteriores conservan su alcance. El MCP expone once herramientas. El modo predeterminado `disabled` bloquea las llamadas y `fixtures` usa solo datos sintéticos. En `autodesk`, exige una credencial propia de quince minutos antes de consultar datos; FastAPI revalida la conexión individual y la lista de acceso. La ejecución de incidencias desde MCP sigue bloqueada. No incluye adjuntos, pushpins, visor, campos personalizados ni eliminación. La actualización de responsable queda fuera; al crear, si se elige uno, se resuelve por identidad Autodesk y se revalida su empresa cuando corresponde.
 
 Las preparaciones y resultados se cifran en SQLite y se vinculan a la sesión autenticada. La confirmación web exige origen y CSRF; no se acepta un payload nuevo en la ejecución. Tras un timeout o fallo remoto ambiguo, se conserva un resultado incierto y no se reenvía. Comprueba Autodesk antes de preparar otra operación: no se garantiza ausencia absoluta de duplicados entre planes distintos. Un proceso interrumpido puede dejar el plan en «running»; tampoco se reejecuta. La comprobación de cambios antes de PATCH evita sobrescribir una revisión obsoleta detectada, pero no es un bloqueo transaccional en Autodesk.
 
@@ -71,7 +74,7 @@ uv run --frozen python scripts/init_local_env.py
 ./scripts/check.ps1
 ```
 
-El script ejecuta formato, lint, tipos, pruebas y builds. Las pruebas usan transportes simulados y SQLite temporal; no requieren credenciales ni consultan Autodesk. Una fixture OAuth del cliente MCP explora el protocolo y no habilita autenticación de producto.
+El script ejecuta formato, lint, tipos, pruebas y builds. Las pruebas usan transportes simulados y SQLite temporal; no requieren credenciales ni consultan Autodesk. Las pruebas OAuth completan consentimiento y PKCE contra un proveedor local con identidades sintéticas; no prueban por sí solas el acceso Autodesk real.
 
 Para desarrollar sin Docker, abre tres terminales desde la raíz:
 
@@ -87,7 +90,7 @@ pnpm dev:web
 pnpm dev:mcp
 ```
 
-Con los servicios arrancados, `pnpm smoke` comprueba API, SQLite, proxy web y conexión MCP, catálogo de once herramientas y ejecución bloqueada. El MCP nativo admite su propio `apps/mcp/.env`; no necesita ni debe recibir los secretos APS de la API.
+Con los servicios arrancados, `pnpm smoke` comprueba API, SQLite y proxy web. En modo autenticado verifica el rechazo anónimo y el descubrimiento OAuth sin consultar Autodesk; en los otros modos verifica el catálogo y el bloqueo de ejecución. El MCP nativo admite su propio `apps/mcp/.env`; no necesita ni debe recibir los secretos APS de la API.
 
 ## Importación Excel
 
@@ -105,4 +108,4 @@ Se adaptan patrones de un proyecto propio, DataForge: conexión individual, canj
 
 ## Herramientas MCP
 
-[Arranque y recorrido sintético](docs/herramientas-mcp.md): contratos de consulta, contexto, preparación y resultados por Streamable HTTP. Sin autenticación MCP ni operaciones APS desde MCP. El modo predeterminado bloquea las llamadas; fixtures permite observarlas en /demo con datos de ejemplo. La ejecución sigue bloqueada.
+[Autorización y configuración del cliente](docs/autenticacion-mcp.md): credenciales MCP separadas de APS, descubrimiento OAuth, cliente preinscrito, consentimiento y contexto interno validado por FastAPI. El cliente SDK local está en `/client` solo en modo `autodesk`. No hay agente conectado ni ejecución MCP. El [ensayo sintético de contratos](docs/herramientas-mcp.md) sigue disponible en modo `fixtures`.

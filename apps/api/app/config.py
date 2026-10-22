@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     token_encryption_key: SecretStr = SecretStr("")
     session_ttl_seconds: int = Field(default=28800, ge=300, le=86400)
     cookie_secure: bool = False
+    mcp_internal_secret: SecretStr = SecretStr("")
+    mcp_issuer: str = "http://127.0.0.1:8001"
 
     @model_validator(mode="after")
     def validate_auth_settings(self) -> "Settings":

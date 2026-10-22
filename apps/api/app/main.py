@@ -8,6 +8,8 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.exc import OperationalError, SQLAlchemyError
 
+from app.auth.mcp import delegated_session
+from app.auth.mcp import router as mcp_router
 from app.auth.provider import AutodeskProvider
 from app.auth.router import router as auth_router
 from app.auth.service import AuthFailure, AuthService
@@ -70,6 +72,9 @@ def create_app(
     app.include_router(members_router)
     app.include_router(issues_router)
     app.include_router(imports_router)
+    app.include_router(mcp_router)
+    for business_router in (projects_router, members_router, issues_router, imports_router):
+        app.include_router(business_router, prefix="/mcp-api")
     app.add_exception_handler(ProjectFailure, project_error)  # type: ignore[arg-type]
     app.add_exception_handler(AuthFailure, auth_error)  # type: ignore[arg-type]
 
@@ -81,8 +86,30 @@ def create_app(
     async def auth_headers(
         request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        if request.url.path.startswith("/mcp-api/"):
+            # E07 permite lectura y preparación; nunca aprobación, subida ni ejecución.
+            import re
+
+            if request.method != "GET" and not (
+                request.method == "POST"
+                and re.fullmatch(
+                    r"/mcp-api/projects/hubs/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/issue-plans",
+                    request.url.path,
+                )
+            ):
+                return JSONResponse({"error": "mcp_execution_disabled"}, status_code=403)
+            from starlette.concurrency import run_in_threadpool
+
+            try:
+                request.state.mcp_identity = await run_in_threadpool(delegated_session, request)
+            except AuthFailure as exc:
+                return JSONResponse(
+                    {"error": exc.code},
+                    status_code=exc.status,
+                    headers={"Cache-Control": "no-store"},
+                )
         response = await call_next(request)
-        if request.url.path.startswith(("/auth/", "/projects/")):
+        if request.url.path.startswith(("/auth/", "/projects/", "/mcp")):
             response.headers["Cache-Control"] = "no-store"
             response.headers["Referrer-Policy"] = "no-referrer"
             response.headers["X-Content-Type-Options"] = "nosniff"

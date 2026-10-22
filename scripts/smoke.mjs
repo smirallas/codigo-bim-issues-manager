@@ -28,25 +28,38 @@ for (const url of [
 }
 const html = await fetch("http://127.0.0.1:5173").then((r) => r.text());
 assert.match(html, /Issues Manager/);
-const client = new Client({
-  name: "issue-manager-e00-smoke",
-  version: "0.0.0",
-});
-try {
-  await client.connect(
-    new StreamableHTTPClientTransport(new URL("http://127.0.0.1:8001/mcp")),
-  );
-  const tools = (await client.listTools()).tools;
-  assert.equal(tools.length, 11);
-  assert.ok(tools.some((tool) => tool.name === "prepare_issue"));
-  const result = await client.callTool({
-    name: "execute_issue_plan",
-    arguments: { plan_id: "demo-smoke" },
-  });
-  assert.equal(result.isError, true);
+const challenge = await fetch("http://127.0.0.1:8001/mcp", { method: "POST" });
+if (challenge.status === 401) {
+  assert.match(challenge.headers.get("www-authenticate"), /resource_metadata/);
+  const metadata = await fetch(
+    "http://127.0.0.1:8001/.well-known/oauth-protected-resource/mcp",
+  ).then((r) => r.json());
+  assert.equal(metadata.resource, "http://127.0.0.1:8001/mcp");
+  assert.deepEqual(metadata.scopes_supported, ["issues:access"]);
   console.info(
-    "OK Streamable HTTP: initialize + tools/list (11), execution blocked",
+    "OK OAuth MCP: anonymous access rejected, discovery and scope available; no Autodesk call",
   );
-} finally {
-  await client.close();
+} else {
+  const client = new Client({
+    name: "issue-manager-e00-smoke",
+    version: "0.0.0",
+  });
+  try {
+    await client.connect(
+      new StreamableHTTPClientTransport(new URL("http://127.0.0.1:8001/mcp")),
+    );
+    const tools = (await client.listTools()).tools;
+    assert.equal(tools.length, 11);
+    assert.ok(tools.some((tool) => tool.name === "prepare_issue"));
+    const result = await client.callTool({
+      name: "execute_issue_plan",
+      arguments: { plan_id: "demo-smoke" },
+    });
+    assert.equal(result.isError, true);
+    console.info(
+      "OK Streamable HTTP: initialize + tools/list (11), execution blocked",
+    );
+  } finally {
+    await client.close();
+  }
 }

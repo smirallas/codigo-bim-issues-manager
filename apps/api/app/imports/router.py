@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Request, Response
 
-from app.auth.router import SESSION_COOKIE
 from app.imports.schemas import ImportReview
 from app.imports.service import ImportService
 from app.imports.workbook import MAX_BYTES, template
 from app.issues.router import write_access
-from app.projects.router import credentials
+from app.projects.router import credentials, owner_session
 from app.projects.service import ProjectFailure
 
 router = APIRouter(prefix="/projects", tags=["imports"])
@@ -44,7 +43,7 @@ async def prepare(request: Request, hub_id: str, project_id: str) -> ImportRevie
 @router.get("/imports/{identifier}", response_model=ImportReview)
 def review(request: Request, identifier: str) -> ImportReview:
     credentials(request)
-    return service(request).review(request.cookies[SESSION_COOKIE], identifier)
+    return service(request).review(owner_session(request), identifier)
 
 
 @router.post("/imports/{identifier}/approve", response_model=ImportReview)

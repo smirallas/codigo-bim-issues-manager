@@ -11,11 +11,17 @@ export interface HttpOptions {
   allowedOrigins: string[];
   contractApi?: ContractApi;
   fixtureDemo?: boolean;
+  authenticated?: {
+    guard: RequestHandler;
+    api: (req: import("express").Request) => ContractApi;
+  };
+  app?: Express;
 }
 
-/** Transporte sin sesión. Solo /ready consulta la API real; los contratos son sintéticos. */
+/** Streamable HTTP sin estado de transporte; E07 autentica cada petición antes de las herramientas. */
 export function createHttpApp(options: HttpOptions): Express {
-  const app = createMcpExpressApp({ allowedHosts: options.allowedHosts });
+  const app =
+    options.app ?? createMcpExpressApp({ allowedHosts: options.allowedHosts });
   app.disable("x-powered-by");
   app.use((req, res, next) => {
     if (
@@ -58,7 +64,9 @@ export function createHttpApp(options: HttpOptions): Express {
   });
 
   const handleMcp: RequestHandler = async (req, res) => {
-    const server = createMcpServer(options.contractApi);
+    const server = createMcpServer(
+      options.authenticated?.api(req) ?? options.contractApi,
+    );
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: undefined,
       enableJsonResponse: true,
@@ -75,7 +83,11 @@ export function createHttpApp(options: HttpOptions): Express {
       await server.close();
     }
   };
-  app.post("/mcp", handleMcp);
+  app.post(
+    "/mcp",
+    ...(options.authenticated ? [options.authenticated.guard] : []),
+    handleMcp,
+  );
   app.get("/mcp", (_req, res) => {
     res.status(405).set("Allow", "POST").end();
   });

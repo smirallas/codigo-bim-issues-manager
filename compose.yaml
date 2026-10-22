@@ -15,6 +15,8 @@ services:
       ISSUES_TOKEN_ENCRYPTION_KEY: ${ISSUES_TOKEN_ENCRYPTION_KEY:-}
       ISSUES_COOKIE_SECURE: ${ISSUES_COOKIE_SECURE:-false}
       ISSUES_SESSION_TTL_SECONDS: ${ISSUES_SESSION_TTL_SECONDS:-28800}
+      ISSUES_MCP_INTERNAL_SECRET: ${ISSUES_MCP_INTERNAL_SECRET:-}
+      ISSUES_MCP_ISSUER: ${ISSUES_MCP_ISSUER:-http://127.0.0.1:8001}
     ports: ["127.0.0.1:8000:8000"]
     volumes: ["api-data:/workspace/apps/api/data"]
     healthcheck:
@@ -58,10 +60,18 @@ services:
       MCP_HOST: 0.0.0.0
       MCP_PORT: "8001"
       MCP_DATA_MODE: ${MCP_DATA_MODE:-disabled}
+      ISSUES_MCP_ISSUER: ${ISSUES_MCP_ISSUER:-http://127.0.0.1:8001}
+      ISSUES_MCP_INTERNAL_SECRET: ${ISSUES_MCP_INTERNAL_SECRET:-}
+      MCP_STORAGE_KEY: ${MCP_STORAGE_KEY:-}
+      MCP_STORAGE_FILE: /workspace/apps/mcp/data/oauth.db
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://127.0.0.1:5173}
+      MCP_CLIENT_ID: ${MCP_CLIENT_ID:-}
+      MCP_CLIENT_REDIRECT_URI: ${MCP_CLIENT_REDIRECT_URI:-}
       API_BASE_URL: http://api:8000
       MCP_ALLOWED_HOSTS: 127.0.0.1,localhost,mcp
       MCP_ALLOWED_ORIGINS: http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:8001,http://localhost:8001
     ports: ["127.0.0.1:8001:8001"]
+    volumes: ["mcp-data:/workspace/apps/mcp/data"]
     depends_on:
       api: { condition: service_healthy }
     healthcheck:
@@ -77,3 +87,4 @@ services:
       retries: 5
 volumes:
   api-data:
+  mcp-data:

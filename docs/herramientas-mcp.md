@@ -1,6 +1,6 @@
 # Ensayar herramientas MCP sobre la API
 
-Esta versión define once contratos por Streamable HTTP con el SDK MCP 1.30.0. No autentica al cliente MCP ni le permite consultar datos de Autodesk. La web conserva su login y sus operaciones reales, independientes de este ensayo.
+Esta guía describe el ensayo sintético de once contratos por Streamable HTTP con el SDK MCP 1.30.0. Su modo `fixtures` no autentica al cliente ni consulta Autodesk. La versión actual también ofrece el modo `autodesk`: consulta [la guía de autenticación MCP](autenticacion-mcp.md) para configurarlo. La web conserva su login y sus operaciones reales.
 
 ## Arrancar el ensayo
 
@@ -22,7 +22,7 @@ Remove-Item Env:MCP_DATA_MODE
 docker compose up --wait --wait-timeout 120 mcp
 ```
 
-Comprueba que tu `.env` no establezca `fixtures` si quieres mantener el bloqueo. No hay modo `live`: un valor desconocido detiene el arranque. `/demo` solo existe en fixtures. Los puertos Compose se limitan a loopback; este ensayo sin autenticación no es un despliegue remoto.
+Configura `MCP_DATA_MODE=disabled` en `.env` si quieres volver al bloqueo: quitar una variable de PowerShell no anula el valor del archivo. E07 añade `autodesk` con autenticación obligatoria; no hay modo `live` y un valor desconocido detiene el arranque. `/demo` solo existe en fixtures. Los puertos Compose se limitan a loopback; este ensayo sin autenticación no es un despliegue remoto.
 
 Sin Docker, `apps/mcp/.env` utiliza las mismas variables; ejecuta `pnpm dev:mcp`. Con otro puerto, añade su origen exacto a `MCP_ALLOWED_ORIGINS`. `/ready` sigue comprobando la API local; un transporte disponible no acredita permisos Autodesk.
 
