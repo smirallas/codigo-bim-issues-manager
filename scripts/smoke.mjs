@@ -36,8 +36,17 @@ try {
   await client.connect(
     new StreamableHTTPClientTransport(new URL("http://127.0.0.1:8001/mcp")),
   );
-  assert.deepEqual((await client.listTools()).tools, []);
-  console.info("OK Streamable HTTP: initialize + tools/list (empty)");
+  const tools = (await client.listTools()).tools;
+  assert.equal(tools.length, 11);
+  assert.ok(tools.some((tool) => tool.name === "prepare_issue"));
+  const result = await client.callTool({
+    name: "execute_issue_plan",
+    arguments: { plan_id: "demo-smoke" },
+  });
+  assert.equal(result.isError, true);
+  console.info(
+    "OK Streamable HTTP: initialize + tools/list (11), execution blocked",
+  );
 } finally {
   await client.close();
 }

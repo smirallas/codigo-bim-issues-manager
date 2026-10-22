@@ -40,3 +40,9 @@ Etiqueta `importar-incidencias-excel-autodesk-issues-api`: plantilla XLSX de sei
 Prueba real del 22 de octubre de 2026 en Snowdon Towers: un archivo con una fila válida y otra sin título. La válida creó una única incidencia sintética cerrada y sin responsable; la otra quedó bloqueada. Relectura verificada y contraste en Autodesk, confirmado por Sergio. Recuperación del resultado guardado comprobada sin otro envío. No se borró ni se publicó la incidencia.
 
 Pase final: 153 pruebas API, 53 web y 8 MCP, 214 en total; formato, lint, tipos, builds, Docker y smoke correctos. Homónimos, fechas, columnas ausentes, aislamiento, caducidad, permisos retirados, resultados parciales y fallos inciertos se prueban con datos sintéticos. No se provocaron fallos de red reales ni se midió una importación masiva. El archivo nuevo puede duplicar datos de otro lote y no hay transacción global ni rollback de filas aceptadas. MCP conserva catálogo vacío: E06 no está implementada.
+
+## Diseñar herramientas MCP sobre una API con FastAPI
+
+Etiqueta `disenar-herramientas-mcp-fastapi`: once contratos por Streamable HTTP, esquemas Zod, rutas cerradas y salidas estructuradas. Modo predeterminado bloqueado; modo fixtures con API interna simulada y página de ensayo HTTP. La preparación, revisión y ejecución bloqueada se han observado en navegador con datos sintéticos. No acredita autenticación MCP ni consultas Autodesk desde MCP, y no hay agente conectado. Guía: [herramientas MCP](herramientas-mcp.md).
+
+La ejecución se mantiene bloqueada porque el endpoint web no conserva una aprobación humana independiente verificable para MCP. La entrega de autenticación sigue pendiente. La web y su conexión Autodesk no se modifican.

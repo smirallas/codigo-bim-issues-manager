@@ -2,14 +2,18 @@ import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import type { Express, RequestHandler } from "express";
 import { createMcpServer } from "./server.js";
+import type { ContractApi } from "./contracts.js";
+import { demoHtml } from "./demo.js";
 
 export interface HttpOptions {
   apiBaseUrl: string;
   allowedHosts: string[];
   allowedOrigins: string[];
+  contractApi?: ContractApi;
+  fixtureDemo?: boolean;
 }
 
-/** Crea un servidor HTTP sin estado. La única dependencia consultada es /ready de la API. */
+/** Transporte sin sesión. Solo /ready consulta la API real; los contratos son sintéticos. */
 export function createHttpApp(options: HttpOptions): Express {
   const app = createMcpExpressApp({ allowedHosts: options.allowedHosts });
   app.disable("x-powered-by");
@@ -27,6 +31,10 @@ export function createHttpApp(options: HttpOptions): Express {
   app.get("/health", (_req, res) => {
     res.json({ status: "ok", service: "mcp" });
   });
+  if (options.fixtureDemo && options.contractApi)
+    app.get("/demo", (_req, res) => {
+      res.set("Cache-Control", "no-store").type("html").send(demoHtml);
+    });
   app.get("/ready", async (_req, res) => {
     try {
       const response = await fetch(new URL("/ready", options.apiBaseUrl), {
@@ -50,7 +58,7 @@ export function createHttpApp(options: HttpOptions): Express {
   });
 
   const handleMcp: RequestHandler = async (req, res) => {
-    const server = createMcpServer();
+    const server = createMcpServer(options.contractApi);
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: undefined,
       enableJsonResponse: true,

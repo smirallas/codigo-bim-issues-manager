@@ -1,15 +1,13 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import { registerTools } from "./tools.js";
+import type { ContractApi } from "./contracts.js";
 
-/** Expone solo el catálogo vacío de E00; no registra herramientas de negocio. */
-export function createMcpServer(): McpServer {
+/** E06 publica contratos; ningún adaptador conecta todavía con Autodesk. */
+export function createMcpServer(api?: ContractApi): McpServer {
   const server = new McpServer(
-    { name: "issue-manager-e00", version: "0.0.0" },
+    { name: "issue-manager", version: "0.6.0" },
     { capabilities: { tools: {} } },
   );
-  // El SDK registra este manejador al añadir la primera herramienta; E00 no tiene ninguna.
-  server.server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools: [],
-  }));
+  registerTools(server, api);
   return server;
 }

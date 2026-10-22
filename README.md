@@ -1,6 +1,6 @@
 # Issues Manager · Código BIM
 
-Ejemplo educativo de la serie de Código BIM sobre las APIs de Autodesk Forma y la gestión de incidencias. React/TypeScript, FastAPI/Python y una base MCP por Streamable HTTP. La serie llegará a un servidor MCP para un agente de IA; esa funcionalidad todavía no está implementada.
+Ejemplo educativo de la serie de Código BIM sobre las APIs de Autodesk Forma y la gestión de incidencias. React/TypeScript, FastAPI/Python y una base MCP por Streamable HTTP. El MCP ensaya contratos con datos sintéticos; su autenticación y el recorrido con un agente sobre Autodesk real siguen pendientes.
 
 ## Código completo de cada artículo
 
@@ -38,7 +38,7 @@ Importar incidencias desde Excel con Autodesk Issues API → [importar-incidenci
 - Revisar una preparación inmutable durante diez minutos antes de confirmar su envío. Se revalidan contexto, permisos y datos; el resultado queda guardado y el mismo plan no vuelve a escribir.
 - Ejecutar pruebas sin credenciales reales y arrancar la base MCP con catálogo vacío.
 
-Esta versión incorpora operaciones individuales con Issues API e importación desde una plantilla Excel. Las etiquetas anteriores conservan su alcance. Todavía no permite utilizar herramientas de negocio MCP. El MCP no autentica usuarios y no debe recibir datos privados. No incluye adjuntos, pushpins, visor, campos personalizados ni eliminación. La actualización de responsable queda fuera; al crear, si se elige uno, se resuelve por identidad Autodesk y se revalida su empresa cuando corresponde.
+Esta versión incorpora operaciones individuales con Issues API e importación desde una plantilla Excel. Las etiquetas anteriores conservan su alcance. El MCP expone once contratos, bloqueados por defecto, con modo fixtures sin datos Autodesk. El MCP no autentica usuarios y no debe recibir datos privados. No incluye adjuntos, pushpins, visor, campos personalizados ni eliminación. La actualización de responsable queda fuera; al crear, si se elige uno, se resuelve por identidad Autodesk y se revalida su empresa cuando corresponde.
 
 Las preparaciones y resultados se cifran en SQLite y se vinculan a la sesión autenticada. La confirmación web exige origen y CSRF; no se acepta un payload nuevo en la ejecución. Tras un timeout o fallo remoto ambiguo, se conserva un resultado incierto y no se reenvía. Comprueba Autodesk antes de preparar otra operación: no se garantiza ausencia absoluta de duplicados entre planes distintos. Un proceso interrumpido puede dejar el plan en «running»; tampoco se reejecuta. La comprobación de cambios antes de PATCH evita sobrescribir una revisión obsoleta detectada, pero no es un bloqueo transaccional en Autodesk.
 
@@ -87,7 +87,7 @@ pnpm dev:web
 pnpm dev:mcp
 ```
 
-Con los servicios arrancados, `pnpm smoke` comprueba API, SQLite, proxy web y conexión MCP con catálogo vacío. El MCP nativo admite su propio `apps/mcp/.env`; no necesita ni debe recibir los secretos APS de la API.
+Con los servicios arrancados, `pnpm smoke` comprueba API, SQLite, proxy web y conexión MCP, catálogo de once herramientas y ejecución bloqueada. El MCP nativo admite su propio `apps/mcp/.env`; no necesita ni debe recibir los secretos APS de la API.
 
 ## Importación Excel
 
@@ -102,3 +102,7 @@ Se adaptan patrones de un proyecto propio, DataForge: conexión individual, canj
 ## Licencia
 
 [MIT](LICENSE), Copyright 2026 Sergio Mirallas. Las cuentas y servicios Autodesk requieren su propia configuración y condiciones; este repositorio no concede acceso a proyectos de terceros.
+
+## Herramientas MCP
+
+[Arranque y recorrido sintético](docs/herramientas-mcp.md): contratos de consulta, contexto, preparación y resultados por Streamable HTTP. Sin autenticación MCP ni operaciones APS desde MCP. El modo predeterminado bloquea las llamadas; fixtures permite observarlas en /demo con datos de ejemplo. La ejecución sigue bloqueada.
