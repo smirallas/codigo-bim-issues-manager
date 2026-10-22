@@ -13,6 +13,8 @@ from app.auth.router import router as auth_router
 from app.auth.service import AuthFailure, AuthService
 from app.config import Settings
 from app.database import check_database, create_database_engine
+from app.issues.router import router as issues_router
+from app.issues.service import IssueService
 from app.logging import protect_access_logs
 from app.members.router import router as members_router
 from app.members.service import MemberService
@@ -36,7 +38,7 @@ def create_app(
     settings: Settings | None = None,
     provider_transport: httpx.BaseTransport | None = None,
 ) -> FastAPI:
-    """Compone E03; el transporte inyectable permite probar APS sin credenciales reales."""
+    """Compone E04; el transporte inyectable permite probar APS sin credenciales reales."""
     config = settings or Settings()
 
     @asynccontextmanager
@@ -50,6 +52,12 @@ def create_app(
             )
             app.state.project_service = ProjectService(provider_transport)
             app.state.member_service = MemberService(app.state.project_service, provider_transport)
+            app.state.issue_service = IssueService(
+                engine,
+                app.state.member_service,
+                config.token_encryption_key.get_secret_value(),
+                provider_transport,
+            )
             yield
         finally:
             engine.dispose()
@@ -59,6 +67,7 @@ def create_app(
     app.include_router(auth_router)
     app.include_router(projects_router)
     app.include_router(members_router)
+    app.include_router(issues_router)
     app.add_exception_handler(ProjectFailure, project_error)  # type: ignore[arg-type]
     app.add_exception_handler(AuthFailure, auth_error)  # type: ignore[arg-type]
 

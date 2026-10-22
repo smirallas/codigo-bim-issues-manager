@@ -21,17 +21,23 @@ La etiqueta identifica una versión reproducible del código, no una certificaci
 
 Miembros y permisos de Autodesk: comprobar responsables con Issues API → [miembros-permisos-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/miembros-permisos-autodesk-issues-api).
 
+Crear y actualizar incidencias de Autodesk con Issues API → [crear-actualizar-incidencias-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/crear-actualizar-incidencias-autodesk-issues-api).
+
 ## Qué puedes hacer con esta versión
 
-- Iniciar sesión con tu cuenta Autodesk mediante OAuth 3-legged y PKCE, con los permisos de lectura `user-profile:read`, `data:read` y `account:read`.
+- Iniciar sesión con tu cuenta Autodesk mediante OAuth 3-legged y PKCE, con `user-profile:read`, `data:read`, `account:read` y `data:write`.
 - Restringir el acceso por correo o dominio, comprobado en el servidor.
 - Mantener una sesión web, renovar las credenciales y desconectar Autodesk.
 - Conservar los tokens cifrados por conexión en SQLite, con migraciones.
 - Consultar hubs y proyectos ACC/Forma accesibles, y seleccionar un proyecto tras comprobarlo de nuevo en el servidor.
 - Consultar miembros y capacidades de Issues por separado, y comprobar un posible responsable por identidad Autodesk sin asignarlo.
+- Consultar tipos activos e incidencias paginadas, preparar una creación y actualizar título, descripción o estado según los permisos de cada incidencia.
+- Revisar una preparación inmutable durante diez minutos antes de confirmar su envío. Se revalidan contexto, permisos y datos; el resultado queda guardado y el mismo plan no vuelve a escribir.
 - Ejecutar pruebas sin credenciales reales y arrancar la base MCP con catálogo vacío.
 
-Esta versión incorpora miembros y capacidades de Issues. Las etiquetas de los artículos anteriores conservan las versiones de login y selección de proyectos. Todavía no permite consultar o modificar incidencias, importar Excel ni utilizar herramientas de negocio MCP. El MCP no autentica usuarios y no debe recibir datos privados.
+Esta versión incorpora operaciones individuales con Issues API. Las etiquetas anteriores conservan su alcance. Todavía no permite importar Excel ni utilizar herramientas de negocio MCP. El MCP no autentica usuarios y no debe recibir datos privados. No incluye adjuntos, pushpins, visor, campos personalizados ni eliminación. La actualización de responsable queda fuera; al crear, si se elige uno, se resuelve por identidad Autodesk y se revalida su empresa cuando corresponde.
+
+Las preparaciones y resultados se cifran en SQLite y se vinculan a la sesión autenticada. La confirmación web exige origen y CSRF; no se acepta un payload nuevo en la ejecución. Tras un timeout o fallo remoto ambiguo, se conserva un resultado incierto y no se reenvía. Comprueba Autodesk antes de preparar otra operación: no se garantiza ausencia absoluta de duplicados entre planes distintos. Un proceso interrumpido puede dejar el plan en «running»; tampoco se reejecuta. La comprobación de cambios antes de PATCH evita sobrescribir una revisión obsoleta detectada, pero no es un bloqueo transaccional en Autodesk.
 
 ## Arranque local con Docker
 

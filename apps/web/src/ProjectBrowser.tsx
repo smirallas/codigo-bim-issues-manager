@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { queryProjects, type ResourceList, type Selection } from "./projects";
 import { ProjectMembers } from "./ProjectMembers";
+import { ProjectIssues } from "./ProjectIssues";
 
 type Listing =
   | { status: "loading" }
@@ -189,6 +190,10 @@ export function ProjectBrowser() {
           </div>
           <ProjectMembers
             key={`${selection.hub.id}/${selection.project.id}`}
+            selection={selection}
+          />
+          <ProjectIssues
+            key={`issues/${selection.hub.id}/${selection.project.id}`}
             selection={selection}
           />
         </>

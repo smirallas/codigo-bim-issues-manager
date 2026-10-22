@@ -6,7 +6,7 @@ FastAPI concentra el intercambio OAuth. La web recibe una sesión, nunca tokens 
 http://127.0.0.1:8000/auth/autodesk/callback
 ```
 
-No mezcles `localhost` y `127.0.0.1`: el navegador debe enviar la cookie del intento OAuth al mismo hostname. Esta versión solicita `user-profile:read data:read account:read`: identidad, lectura de datos y lectura de miembros mediante Admin. No solicita escrituras. Las etiquetas de los artículos anteriores conservan sus permisos originales.
+No mezcles `localhost` y `127.0.0.1`: el navegador debe enviar la cookie del intento OAuth al mismo hostname. Esta versión solicita `user-profile:read data:read account:read data:write`: identidad, lectura de datos/miembros y escritura de incidencias. Las etiquetas anteriores conservan sus permisos originales. Para pasar a esta versión, desconecta y vuelve a conectar Autodesk y revisa el consentimiento de escritura; renovar el token anterior no amplía sus scopes. Mantén Client ID, secreto, callback y reglas de acceso.
 
 ## Habilitar la consulta de proyectos
 

@@ -113,7 +113,12 @@ def test_login_uses_minimal_read_scopes_pkce_and_browser_bound_state(auth) -> No
     response = client.get("/auth/login", follow_redirects=False)
     params = parse_qs(urlsplit(response.headers["location"]).query)
     assert params["scope"] == [APS_SCOPE]
-    assert set(APS_SCOPE.split()) == {"user-profile:read", "data:read", "account:read"}
+    assert set(APS_SCOPE.split()) == {
+        "user-profile:read",
+        "data:read",
+        "account:read",
+        "data:write",
+    }
     assert params["code_challenge_method"] == ["S256"]
     assert "client_secret" not in params
     assert "HttpOnly" in response.headers["set-cookie"]
@@ -397,6 +402,7 @@ def test_migrations_are_additive_and_repeatable(auth) -> None:
         "oauth_attempts",
         "web_sessions",
         "autodesk_connections",
+        "issue_plans",
     }
 
 

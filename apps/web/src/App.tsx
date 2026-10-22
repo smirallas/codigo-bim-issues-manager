@@ -57,7 +57,7 @@ export function App() {
 
   return (
     <main>
-      <p className="eyebrow">Código BIM · E03</p>
+      <p className="eyebrow">Código BIM · E04</p>
       <h1>Issues Manager</h1>
       <aside aria-label="Aviso de demostración">
         <strong>Demostración técnica en desarrollo.</strong> Las operaciones
@@ -114,8 +114,8 @@ export function App() {
       {auth.status === "authenticated" && <ProjectBrowser />}
       <p role="status">{statusText[status]}</p>
       <p>
-        Puedes iniciar sesión y seleccionar un proyecto accesible. Las
-        operaciones con incidencias se incorporarán en entregas posteriores.
+        Puedes consultar incidencias y preparar una creación o actualización.
+        Revisa el contenido antes de confirmar cada envío a Autodesk.
       </p>
     </main>
   );

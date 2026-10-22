@@ -15,6 +15,12 @@ La entrega de miembros y capacidades corresponde a [miembros-permisos-autodesk-i
 
 Las etiquetas conservan una implementación, no acreditan preparación para producción ni completan una aceptación pendiente. Publicar código no publica un artículo.
 
+La entrega de operaciones individuales corresponde a [crear-actualizar-incidencias-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/crear-actualizar-incidencias-autodesk-issues-api): catálogo de tipos activos, listado/detalle, preparación y aprobación de creación, actualización limitada a título, descripción y estado, revalidación y resultados cifrados. Requiere aceptar `data:write` mediante un nuevo login.
+
+El 22 de octubre de 2026 se comprobó con Autodesk real una única incidencia sintética en Snowdon Towers: creación asignada al usuario autorizado, relectura y actualización del mismo ID hasta estado cerrado, también contrastado en la interfaz de Autodesk. Cerrar no elimina; la incidencia permanece en el proyecto. Se mantuvo el valor predeterminado de publicación del proveedor, sin activar su publicación desde esta aplicación.
+
+El pase de esta versión incluye 132 pruebas API, 46 web y 8 MCP (186 en total), formato, lint, tipos y builds. Docker y smoke local correctos. Payload inválido, permiso retirado, denegación de escritura, homónimos y fallos de red se verifican con transportes sintéticos; no se provocó una denegación real cambiando permisos en Autodesk. No hay adjuntos, visor, importación Excel ni escrituras MCP.
+
 ## Seguir el código de un artículo
 
 ```powershell

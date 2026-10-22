@@ -11,7 +11,7 @@ AUTHORIZE_URL = "https://developer.api.autodesk.com/authentication/v2/authorize"
 EXCHANGE_URL = "https://developer.api.autodesk.com/authentication/v2/token"
 REVOKE_URL = "https://developer.api.autodesk.com/authentication/v2/revoke"
 USERINFO_URL = "https://api.userprofile.autodesk.com/userinfo"
-APS_SCOPE = "user-profile:read data:read account:read"
+APS_SCOPE = "user-profile:read data:read account:read data:write"
 CLIENT_AUTH_METHOD = "client_secret_basic"
 
 
