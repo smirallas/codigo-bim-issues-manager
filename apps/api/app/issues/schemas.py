@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -16,6 +17,7 @@ class Issue(BaseModel):
     published: bool = False
     deleted: bool = False
     updatedAt: str | None = None
+    dueDate: str | None = None
     permittedAttributes: list[str] = Field(default_factory=list, max_length=200)
     permittedStatuses: list[str] = Field(default_factory=list, max_length=200)
     permittedActions: list[str] = Field(default_factory=list, max_length=200)
@@ -68,9 +70,13 @@ class PlanInput(BaseModel):
     status: str | None = Field(default=None, min_length=1, max_length=100)
     subtype_id: str | None = Field(default=None, min_length=1, max_length=255)
     assignee_id: str | None = Field(default=None, min_length=1, max_length=255)
+    due_date: str | None = None
 
     @model_validator(mode="after")
     def valid_operation(self) -> "PlanInput":
+        if self.due_date is not None:
+            if date.fromisoformat(self.due_date).isoformat() != self.due_date:
+                raise ValueError("Use YYYY-MM-DD")
         if self.operation == "create":
             if not self.title or not self.status or not self.subtype_id or self.issue_id:
                 raise ValueError("Creation requires title, status and subtype, without issue_id")
@@ -78,6 +84,7 @@ class PlanInput(BaseModel):
             not self.issue_id
             or self.subtype_id is not None
             or self.assignee_id is not None
+            or self.due_date is not None
             or not any(v is not None for v in (self.title, self.description, self.status))
         ):
             raise ValueError("Update requires an issue and changed title, description or status")
@@ -95,6 +102,8 @@ class PlanInput(BaseModel):
         }
         if self.operation == "create":
             result["issueSubtypeId"] = self.subtype_id
+            if self.due_date:
+                result["dueDate"] = self.due_date
             if self.assignee_id:
                 result.update(assignedTo=self.assignee_id, assignedToType="user")
         return result

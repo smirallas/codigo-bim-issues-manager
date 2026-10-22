@@ -137,3 +137,29 @@ input {
   background: #edf8f2;
   overflow-wrap: anywhere;
 }
+
+.excel-import {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #176b53;
+}
+.excel-import label {
+  display: block;
+  margin-block: 1rem;
+}
+.excel-import input[type="file"] {
+  display: block;
+  max-width: 100%;
+  margin-top: 0.5rem;
+}
+.import-row {
+  margin-block: 1rem;
+  padding: 1rem;
+  border: 1px solid #c8d7ce;
+  background: #f4f8f5;
+  overflow-wrap: anywhere;
+}
+.import-row pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

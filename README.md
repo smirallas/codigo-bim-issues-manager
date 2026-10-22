@@ -23,6 +23,8 @@ Miembros y permisos de Autodesk: comprobar responsables con Issues API → [miem
 
 Crear y actualizar incidencias de Autodesk con Issues API → [crear-actualizar-incidencias-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/crear-actualizar-incidencias-autodesk-issues-api).
 
+Importar incidencias desde Excel con Autodesk Issues API → [importar-incidencias-excel-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/importar-incidencias-excel-autodesk-issues-api).
+
 ## Qué puedes hacer con esta versión
 
 - Iniciar sesión con tu cuenta Autodesk mediante OAuth 3-legged y PKCE, con `user-profile:read`, `data:read`, `account:read` y `data:write`.
@@ -32,10 +34,11 @@ Crear y actualizar incidencias de Autodesk con Issues API → [crear-actualizar-
 - Consultar hubs y proyectos ACC/Forma accesibles, y seleccionar un proyecto tras comprobarlo de nuevo en el servidor.
 - Consultar miembros y capacidades de Issues por separado, y comprobar un posible responsable por identidad Autodesk sin asignarlo.
 - Consultar tipos activos e incidencias paginadas, preparar una creación y actualizar título, descripción o estado según los permisos de cada incidencia.
+- Importar una plantilla Excel de hasta 25 filas: validar, revisar, aprobar las filas válidas y recuperar resultados sin reenviar las ya procesadas.
 - Revisar una preparación inmutable durante diez minutos antes de confirmar su envío. Se revalidan contexto, permisos y datos; el resultado queda guardado y el mismo plan no vuelve a escribir.
 - Ejecutar pruebas sin credenciales reales y arrancar la base MCP con catálogo vacío.
 
-Esta versión incorpora operaciones individuales con Issues API. Las etiquetas anteriores conservan su alcance. Todavía no permite importar Excel ni utilizar herramientas de negocio MCP. El MCP no autentica usuarios y no debe recibir datos privados. No incluye adjuntos, pushpins, visor, campos personalizados ni eliminación. La actualización de responsable queda fuera; al crear, si se elige uno, se resuelve por identidad Autodesk y se revalida su empresa cuando corresponde.
+Esta versión incorpora operaciones individuales con Issues API e importación desde una plantilla Excel. Las etiquetas anteriores conservan su alcance. Todavía no permite utilizar herramientas de negocio MCP. El MCP no autentica usuarios y no debe recibir datos privados. No incluye adjuntos, pushpins, visor, campos personalizados ni eliminación. La actualización de responsable queda fuera; al crear, si se elige uno, se resuelve por identidad Autodesk y se revalida su empresa cuando corresponde.
 
 Las preparaciones y resultados se cifran en SQLite y se vinculan a la sesión autenticada. La confirmación web exige origen y CSRF; no se acepta un payload nuevo en la ejecución. Tras un timeout o fallo remoto ambiguo, se conserva un resultado incierto y no se reenvía. Comprueba Autodesk antes de preparar otra operación: no se garantiza ausencia absoluta de duplicados entre planes distintos. Un proceso interrumpido puede dejar el plan en «running»; tampoco se reejecuta. La comprobación de cambios antes de PATCH evita sobrescribir una revisión obsoleta detectada, pero no es un bloqueo transaccional en Autodesk.
 
@@ -85,6 +88,10 @@ pnpm dev:mcp
 ```
 
 Con los servicios arrancados, `pnpm smoke` comprueba API, SQLite, proxy web y conexión MCP con catálogo vacío. El MCP nativo admite su propio `apps/mcp/.env`; no necesita ni debe recibir los secretos APS de la API.
+
+## Importación Excel
+
+Selecciona un proyecto y descarga la plantilla desde «Importar incidencias desde Excel». Preparar el archivo muestra datos y errores por fila, sin escrituras. Después se aprueban las filas válidas y cada una se envía mediante el servicio de incidencias, con permisos revalidados y resultados persistentes. [Columnas, límites y recuperación](docs/importar-excel.md). No se importan archivos arbitrarios ni se ejecutan fórmulas. Un lote nuevo puede duplicar incidencias: consulta siempre el resultado guardado tras una respuesta perdida.
 
 ## Contenido del repositorio
 

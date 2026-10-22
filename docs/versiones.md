@@ -32,3 +32,11 @@ git switch -c mi-prueba-login
 No mover ni reutilizar una etiqueta publicada. Una corrección posterior que cambie el código enlazado recibirá otra etiqueta, por ejemplo `login-autodesk-fastapi-v2`, y el artículo se actualizará para enlazarla.
 
 Los siguientes artículos utilizarán nombres descriptivos cuando exista su código. No se crean versiones anticipadas ni una etiqueta retrospectiva de la base anterior al login: no se conserva una instantánea verificable de esa etapa.
+
+## Importar incidencias desde Excel
+
+Etiqueta `importar-incidencias-excel-autodesk-issues-api`: plantilla XLSX de seis columnas, límites de archivo y filas, normalización de fechas, resolución de tipos y responsables, errores por fila y aprobación de revisión cifrada. Cada creación reutiliza el servicio E04 y conserva su resultado. Solo creaciones nuevas; no se modifica una incidencia existente desde Excel.
+
+Prueba real del 22 de octubre de 2026 en Snowdon Towers: un archivo con una fila válida y otra sin título. La válida creó una única incidencia sintética cerrada y sin responsable; la otra quedó bloqueada. Relectura verificada y contraste en Autodesk, confirmado por Sergio. Recuperación del resultado guardado comprobada sin otro envío. No se borró ni se publicó la incidencia.
+
+Pase final: 153 pruebas API, 53 web y 8 MCP, 214 en total; formato, lint, tipos, builds, Docker y smoke correctos. Homónimos, fechas, columnas ausentes, aislamiento, caducidad, permisos retirados, resultados parciales y fallos inciertos se prueban con datos sintéticos. No se provocaron fallos de red reales ni se midió una importación masiva. El archivo nuevo puede duplicar datos de otro lote y no hay transacción global ni rollback de filas aceptadas. MCP conserva catálogo vacío: E06 no está implementada.

@@ -26,6 +26,7 @@
 /docs/*
 !/docs/configuracion-aps.md
 !/docs/versiones.md
+!/docs/importar-excel.md
 
 # Application sources, configuration and tests.
 /apps/*

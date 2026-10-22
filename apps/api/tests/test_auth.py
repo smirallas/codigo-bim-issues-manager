@@ -403,6 +403,7 @@ def test_migrations_are_additive_and_repeatable(auth) -> None:
         "web_sessions",
         "autodesk_connections",
         "issue_plans",
+        "import_plans",
     }
 
 

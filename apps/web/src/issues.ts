@@ -128,7 +128,7 @@ function result(v: unknown): v is WriteResult {
     (v.issue === null || issue(v.issue))
   );
 }
-function review(v: unknown): v is PlanReview {
+export function isPlanReview(v: unknown): v is PlanReview {
   return (
     record(v) &&
     typeof v.id === "string" &&
@@ -201,7 +201,7 @@ export async function issueRequest<K extends keyof Responses>(
           data.pagination && (data.pagination as Record<string, unknown>)[k],
         ),
       );
-  if (kind === "prepare" || kind === "review") valid = review(data);
+  if (kind === "prepare" || kind === "review") valid = isPlanReview(data);
   if (kind === "execute") valid = result(data);
   if (!valid) throw new Error("La respuesta de incidencias no es válida.");
   signal?.throwIfAborted();

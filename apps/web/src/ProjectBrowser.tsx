@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { queryProjects, type ResourceList, type Selection } from "./projects";
 import { ProjectMembers } from "./ProjectMembers";
 import { ProjectIssues } from "./ProjectIssues";
+import { ProjectImport } from "./ProjectImport";
 
 type Listing =
   | { status: "loading" }
@@ -194,6 +195,10 @@ export function ProjectBrowser() {
           />
           <ProjectIssues
             key={`issues/${selection.hub.id}/${selection.project.id}`}
+            selection={selection}
+          />
+          <ProjectImport
+            key={`imports/${selection.hub.id}/${selection.project.id}`}
             selection={selection}
           />
         </>
