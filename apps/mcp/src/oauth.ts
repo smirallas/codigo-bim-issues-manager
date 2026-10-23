@@ -229,7 +229,7 @@ export async function installOAuth(
         .send(
           page(
             "Autorizar el cliente MCP",
-            `<p>Cuenta conectada: <strong>${escapeHtml(identity.name)}</strong>.</p><p>Cliente: <strong>${escapeHtml(String(detail.params.client_id))}</strong>.</p><p>Podrá consultar tus proyectos e incidencias y preparar revisiones con esta misma conexión Autodesk. No podrá crear, modificar ni aprobar incidencias en esta entrega.</p><p>La credencial MCP dura 15 minutos. Desconectar Autodesk o caducar la sesión de la aplicación corta también el acceso a los datos.</p><form method="post" action="/interaction/${detail.uid}"><input type="hidden" name="csrf" value="${nonce}"><button name="decision" value="allow">Autorizar cliente</button><button name="decision" value="deny">Cancelar</button></form>`,
+            `<p>Cuenta conectada: <strong>${escapeHtml(identity.name)}</strong>.</p><p>Cliente: <strong>${escapeHtml(String(detail.params.client_id))}</strong>.</p><p>Podrá consultar tus proyectos e incidencias y preparar revisiones con esta misma conexión Autodesk. Solo podrá crear o modificar una incidencia tras tu aprobación del contenido exacto en la web. El cliente no puede aprobar por ti.</p><p>La credencial MCP dura 15 minutos. Desconectar Autodesk o caducar la sesión de la aplicación corta también el acceso a los datos.</p><form method="post" action="/interaction/${detail.uid}"><input type="hidden" name="csrf" value="${nonce}"><button name="decision" value="allow">Autorizar cliente</button><button name="decision" value="deny">Cancelar</button></form>`,
           ),
         );
       await consents.upsert(

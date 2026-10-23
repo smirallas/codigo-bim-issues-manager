@@ -37,9 +37,9 @@ Abre Issues Manager en `http://127.0.0.1:5173`, inicia sesión con una cuenta pe
 
 Recurso: `http://127.0.0.1:8001/mcp`. Un acceso anónimo devuelve 401 y `WWW-Authenticate` con `resource_metadata`. La metadata está en `/.well-known/oauth-protected-resource/mcp`; anuncia el emisor local. `oidc-provider` publica `/.well-known/openid-configuration`, con autorización `/auth`, token `/token` y PKCE S256 obligatorio.
 
-El scope `issues:access` permite consultas y preparación de revisiones; no permite aprobar ni ejecutar. El cliente de ensayo está preinscrito como `issues-manager-demo`, con callback exacto `http://127.0.0.1:8001/client/callback`. Son datos de cliente público, no secretos. No hay registro dinámico ni descarga de metadatos de clientes arbitrarios.
+El scope `issues:access` permite consultas y preparación de revisiones. La ejecución individual requiere además una aprobación del contenido exacto guardada desde la web autenticada; ese scope no concede capacidad para aprobar. El cliente de ensayo está preinscrito como `issues-manager-demo`, con callback exacto `http://127.0.0.1:8001/client/callback`. Son datos de cliente público, no secretos. No hay registro dinámico ni descarga de metadatos de clientes arbitrarios.
 
-Para un cliente adicional configura `MCP_CLIENT_ID` y `MCP_CLIENT_REDIRECT_URI` antes del arranque; el cliente debe utilizar el mismo Client ID, callback exacto, PKCE, recurso y scope. Debe soportar este registro previo y guardar su credencial con seguridad. La conexión de Codex como agente y su configuración verificada corresponden a E08; el cliente SDK de ensayo no demuestra todavía compatibilidad con todos los clientes MCP.
+Para un cliente adicional configura `MCP_CLIENT_ID` y `MCP_CLIENT_REDIRECT_URI` antes del arranque; el cliente debe utilizar el mismo Client ID, callback exacto, PKCE, recurso y scope. Debe soportar este registro previo y guardar su credencial con seguridad. La [guía de operaciones MCP](operaciones-mcp.md) concreta el registro de Codex; el cliente SDK de ensayo no demuestra compatibilidad con todos los clientes MCP.
 
 ## Qué se valida
 
@@ -47,7 +47,7 @@ El recurso acepta solo tokens opacos emitidos por su propio proveedor, vigentes,
 
 MCP no reenvía el bearer del cliente a FastAPI. Genera un JWT interno HS256 de treinta segundos, con emisor configurado, audiencia distinta `issues-manager-api`, propósito y una referencia cifrada a la sesión. FastAPI valida todo ello, resuelve la identidad estable y revalida acceso y credenciales APS. Un `user_id` en los argumentos no acredita identidad. Los planes siguen siendo privados de esa conexión y usan los validadores existentes.
 
-E07 no emite refresh tokens MCP. Al vencer los quince minutos se repite la autorización con la sesión web vigente. La ejecución continúa bloqueada tanto en la herramienta como en las rutas delegadas de FastAPI; `confirmed: true` no sirve como consentimiento.
+No se emiten refresh tokens MCP. Al vencer los quince minutos se repite la autorización con la sesión web vigente. La etiqueta de E07 conserva el bloqueo de ejecución; E08 incorpora ejecución individual tras aprobación web verificable. `confirmed: true` no sirve como consentimiento.
 
 ## Límites
 

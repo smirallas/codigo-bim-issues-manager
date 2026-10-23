@@ -29,6 +29,7 @@
 !/docs/importar-excel.md
 !/docs/herramientas-mcp.md
 !/docs/autenticacion-mcp.md
+!/docs/operaciones-mcp.md
 
 # Application sources, configuration and tests.
 /apps/*

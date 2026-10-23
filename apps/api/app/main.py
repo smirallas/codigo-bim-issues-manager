@@ -87,13 +87,13 @@ def create_app(
         request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
         if request.url.path.startswith("/mcp-api/"):
-            # E07 permite lectura y preparación; nunca aprobación, subida ni ejecución.
+            # E08 delega ejecución aprobada; aprobar y subir siguen siendo operaciones web.
             import re
 
             if request.method != "GET" and not (
                 request.method == "POST"
                 and re.fullmatch(
-                    r"/mcp-api/projects/hubs/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/issue-plans",
+                    r"/mcp-api/projects/(?:hubs/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/issue-plans|issue-plans/[A-Za-z0-9_.-]+/execute)",
                     request.url.path,
                 )
             ):

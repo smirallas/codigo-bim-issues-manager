@@ -32,6 +32,92 @@ const input = {
   },
 };
 describe("E06 contracts", () => {
+  it("reads persisted API plans with null optional request fields", async () => {
+    const fixture = createFixtureApi();
+    const original = (await fixture.request(
+      "POST",
+      `/projects/hubs/${context.hub_id}/${context.project_id}/issue-plans`,
+      input.request,
+    )) as { content: { request: Record<string, unknown> } };
+    original.content.request = {
+      ...original.content.request,
+      issue_id: null,
+      assignee_id: null,
+      due_date: null,
+    };
+    const client = await connect({
+      mode: "autodesk",
+      request: async () => original,
+    });
+    const result = await client.callTool({
+      name: "review_issue_plan",
+      arguments: { plan_id: "existing" },
+    });
+    expect(result.structuredContent).toMatchObject({
+      ok: true,
+      data: { content: { request: { issue_id: null, assignee_id: null } } },
+    });
+  });
+  it("reports malformed plans as an invalid response instead of an upstream outage", async () => {
+    const client = await connect({
+      mode: "autodesk",
+      request: async () => ({ invalid: true }),
+    });
+    const result = await client.callTool({
+      name: "review_issue_plan",
+      arguments: { plan_id: "existing" },
+    });
+    expect(result.structuredContent).toMatchObject({
+      ok: false,
+      error: { code: "invalid_api_response" },
+    });
+  });
+  it("returns a private web review link and delegates execution without approving", async () => {
+    const fixture = createFixtureApi();
+    const request = vi.fn(
+      async (method: "GET" | "POST", path: string, body?: unknown) => {
+        if (path.endsWith("/execute"))
+          return {
+            state: "succeeded",
+            issue_id: "example",
+            issue: null,
+            verified: false,
+            error: null,
+          };
+        return fixture.request(method, path, body);
+      },
+    );
+    const client = await connect({
+      mode: "autodesk",
+      reviewOrigin: "http://127.0.0.1:5173",
+      request,
+    });
+    const response = await client.callTool({
+      name: "prepare_issue",
+      arguments: input,
+    });
+    const plan = (
+      response.structuredContent as { data: { id: string; review_url: string } }
+    ).data;
+    expect(plan.review_url).toBe(
+      `http://127.0.0.1:5173/?review_plan=${plan.id}`,
+    );
+    const result = await client.callTool({
+      name: "execute_issue_plan",
+      arguments: { plan_id: plan.id },
+    });
+    expect(result.structuredContent).toMatchObject({
+      ok: true,
+      data: { state: "succeeded" },
+    });
+    expect(request).toHaveBeenLastCalledWith(
+      "POST",
+      `/projects/issue-plans/${plan.id}/execute`,
+    );
+    expect(
+      request.mock.calls.some(([, path]) => path.includes("/approve")),
+    ).toBe(false);
+  });
   it("declares schemas, effects and synthetic scope for every tool", async () => {
     const client = await connect();
     const { tools } = await client.listTools();

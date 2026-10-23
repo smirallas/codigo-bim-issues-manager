@@ -68,7 +68,7 @@ def test_mcp_context_is_separate_from_web_and_aps(auth):
     assert client.get("/auth/session", headers=headers).status_code == 401
     assert (
         client.post("/mcp-api/projects/issue-plans/example/execute", headers=headers).status_code
-        == 403
+        == 404
     )
     assert (
         client.post("/mcp-api/projects/imports/example/approve", headers=headers).status_code == 403

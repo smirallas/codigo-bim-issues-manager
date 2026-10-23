@@ -1,3 +1,4 @@
+import hashlib
 import secrets
 import time
 from uuid import UUID
@@ -48,6 +49,11 @@ class IssueService:
 
     def _open(self, value: str) -> str:
         return Fernet(self.key.encode()).decrypt(value.encode()).decode()
+
+    @staticmethod
+    def content_digest(content: PlanContent) -> str:
+        """Huella de todos los datos revisados, incluidos contexto y estado anterior."""
+        return hashlib.sha256(content.model_dump_json().encode()).hexdigest()
 
     def _path(self, access: str, hub: str, project: str) -> str:
         clean = construction_project_id(project)
@@ -198,7 +204,13 @@ class IssueService:
         identifier = row.id
         with Session(self.engine) as db, db.begin():
             db.add(row)
-        return PlanReview(id=identifier, expires_at=now + 600, state="prepared", content=content)
+        return PlanReview(
+            id=identifier,
+            expires_at=now + 600,
+            state="prepared",
+            content=content,
+            content_digest=self.content_digest(content),
+        )
 
     def review(self, session_id: str, plan_id: str) -> PlanReview:
         """Recupera la revisión y su resultado para el propietario sin repetir el envío."""
@@ -218,9 +230,37 @@ class IssueService:
                 state=row.state,
                 content=content,
                 result=result,
+                content_digest=self.content_digest(content),
+                approved_at=(
+                    row.approved_at if row.approval_digest == self.content_digest(content) else None
+                ),
             )
 
-    def execute(self, session_id: str, access: str, plan_id: str) -> WriteResult:
+    def approve(self, session_id: str, access: str, plan_id: str, digest: str) -> PlanReview:
+        """Registra solo desde la web autenticada la revisión exacta; no envía a APS."""
+        review = self.review(session_id, plan_id)
+        content = review.content
+        fresh = self.validate(access, content.hub_id, content.project_id, content.request)
+        if fresh != content:
+            raise ProjectFailure("issue_changed_review_again", 409)
+        with Session(self.engine) as db:
+            db.execute(text("BEGIN IMMEDIATE"))
+            row = db.get(IssuePlan, plan_id)
+            if row is None or row.session_hash != fingerprint(session_id):
+                raise ProjectFailure("plan_unavailable", 404)
+            current = PlanContent.model_validate_json(self._open(row.content_encrypted))
+            if row.state != "prepared" or row.expires_at <= int(time.time()):
+                raise ProjectFailure("plan_expired", 409)
+            if not secrets.compare_digest(digest, self.content_digest(current)):
+                raise ProjectFailure("plan_changed_review_again", 409)
+            row.approval_digest = digest
+            row.approved_at = int(time.time())
+            db.commit()
+        return self.review(session_id, plan_id)
+
+    def execute(
+        self, session_id: str, access: str, plan_id: str, *, require_approval: bool = False
+    ) -> WriteResult:
         """Revalida, reclama una vez la revisión aprobada y conserva incluso la incertidumbre."""
         review = self.review(session_id, plan_id)
         if review.state != "prepared":
@@ -229,7 +269,7 @@ class IssueService:
             raise ProjectFailure("plan_expired", 409)
         content = review.content
         fresh = self.validate(access, content.hub_id, content.project_id, content.request)
-        if fresh.payload != content.payload or fresh.before != content.before:
+        if fresh != content:
             raise ProjectFailure("issue_changed_review_again", 409)
         # Solo una petición reclama la preparación. Reiniciar tras un envío no lo repite.
         with Session(self.engine) as db:
@@ -239,8 +279,15 @@ class IssueService:
                 raise ProjectFailure("plan_already_claimed", 409)
             if row.expires_at <= int(time.time()):
                 raise ProjectFailure("plan_expired", 409)
+            current = PlanContent.model_validate_json(self._open(row.content_encrypted))
+            if current != content:
+                raise ProjectFailure("plan_changed_review_again", 409)
+            if require_approval and (
+                row.approved_at is None or row.approval_digest != self.content_digest(current)
+            ):
+                raise ProjectFailure("human_approval_required", 409)
             row.state = "running"
-            row.approved_at = int(time.time())
+            row.approved_at = row.approved_at or int(time.time())
             db.commit()
         result = self._write(access, content)
         with Session(self.engine) as db, db.begin():

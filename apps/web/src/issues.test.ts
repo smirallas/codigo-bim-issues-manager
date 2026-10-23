@@ -21,6 +21,42 @@ const response = (value: unknown, status = 200) =>
     .fn<typeof fetch>()
     .mockResolvedValue(new Response(JSON.stringify(value), { status }));
 describe("issue contracts and write transport", () => {
+  it("approves the reviewed digest with web CSRF without executing", async () => {
+    const plan = {
+      id: "plan",
+      state: "prepared",
+      expires_at: 9999999999,
+      content_digest: "a".repeat(64),
+      approved_at: 1,
+      content: {
+        project_name: "Example",
+        request: { operation: "create" },
+        payload: { title: "Example" },
+        before: null,
+      },
+      result: null,
+    };
+    const fetcher = response(plan);
+    await expect(
+      issueRequest(
+        "approve",
+        "issue-plans/plan/approve",
+        undefined,
+        { content_digest: plan.content_digest },
+        "csrf",
+        fetcher,
+      ),
+    ).resolves.toEqual(plan);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(fetcher).toHaveBeenCalledWith(
+      "/api/projects/issue-plans/plan/approve",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ content_digest: plan.content_digest }),
+        headers: { "Content-Type": "application/json", "X-CSRF-Token": "csrf" },
+      }),
+    );
+  });
   it("queries a paginated page without inventing an empty collection", async () => {
     const value = {
       results: [issue],

@@ -12,4 +12,5 @@ class IssuePlan(Base):
     expires_at: Mapped[int]
     state: Mapped[str] = mapped_column(String(32))
     approved_at: Mapped[int | None]
+    approval_digest: Mapped[str | None] = mapped_column(String(64))
     result_encrypted: Mapped[str | None] = mapped_column(Text)

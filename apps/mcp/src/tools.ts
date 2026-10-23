@@ -11,6 +11,7 @@ import {
   planReview,
   resource,
   resources,
+  writeResult,
   type ContractApi,
 } from "./contracts.js";
 
@@ -20,13 +21,20 @@ const messages: Record<string, string> = {
     "Autoriza el cliente MCP con una sesión Autodesk vigente y una cuenta permitida. El modo fixtures solo contiene datos sintéticos.",
   resource_unavailable: "El recurso no está disponible para esta conexión.",
   plan_expired:
-    "La preparación sintética ha caducado. Prepara otra y revisa su contenido.",
+    "La preparación ha caducado. Prepara otra y revisa su contenido.",
   fixture_limit: "Se ha alcanzado el límite de preparaciones sintéticas.",
   upstream_unavailable:
     "No se ha podido consultar el contrato de la API. No se reintenta automáticamente.",
   invalid_api_response: "La respuesta no cumple el contrato esperado.",
   human_approval_not_available:
-    "Esta entrega no ejecuta incidencias. La aprobación humana verificable y la ejecución MCP quedan para E08.",
+    "El ensayo sintético no ejecuta incidencias en Autodesk.",
+  human_approval_required:
+    "Abre review_url y aprueba el contenido exacto en la web antes de ejecutar. El modelo no puede aprobar.",
+  plan_changed_review_again:
+    "El plan ha cambiado. Revisa y aprueba su contenido de nuevo.",
+  issue_changed_review_again:
+    "La incidencia o sus permisos han cambiado. Prepara otra revisión.",
+  permission_denied: "La cuenta ya no tiene permiso para esa operación.",
 };
 
 /** Herramientas pequeñas sobre rutas cerradas de FastAPI, sin proxy genérico. */
@@ -48,14 +56,14 @@ export function registerTools(server: McpServer, api?: ContractApi): void {
     server.registerTool(
       name,
       {
-        description: `${description} ${api?.mode === "autodesk" ? "Contexto Autodesk individual; no ejecuta escrituras." : "Ensayo sintético sin datos Autodesk reales."}`,
+        description: `${description} ${api?.mode === "autodesk" ? "Contexto Autodesk individual; ejecución solo tras aprobación web verificable." : "Ensayo sintético sin datos Autodesk reales."}`,
         inputSchema: input,
         outputSchema: output,
         annotations: {
           readOnlyHint: readOnly,
-          destructiveHint: false,
+          destructiveHint: name === "execute_issue_plan",
           idempotentHint: readOnly,
-          openWorldHint: false,
+          openWorldHint: api?.mode === "autodesk",
         },
       },
       async (args) => {
@@ -97,6 +105,17 @@ export function registerTools(server: McpServer, api?: ContractApi): void {
   const path = (a: { hub_id: string; project_id: string }) =>
     `/projects/hubs/${encodeURIComponent(a.hub_id)}/${encodeURIComponent(a.project_id)}`;
   const get = (url: string) => api!.request("GET", url);
+  const withReview = (value: unknown) => {
+    const parsed = planReview.safeParse(value);
+    if (!parsed.success) throw new ContractFailure("invalid_api_response");
+    const plan = parsed.data;
+    return api?.mode === "autodesk"
+      ? {
+          ...plan,
+          review_url: `${(api.reviewOrigin ?? "http://127.0.0.1:5173").replace(/\/$/, "")}/?review_plan=${encodeURIComponent(plan.id)}`,
+        }
+      : plan;
+  };
   tool(
     "list_hubs",
     "Lista hubs compatibles, avisos de exclusión y listado incompleto.",
@@ -191,7 +210,10 @@ export function registerTools(server: McpServer, api?: ContractApi): void {
     z.object({ ...context, request: planInput }).strict(),
     planReview,
     false,
-    (a) => api!.request("POST", `${path(a)}/issue-plans`, a.request),
+    async (a) =>
+      withReview(
+        await api!.request("POST", `${path(a)}/issue-plans`, a.request),
+      ),
   );
   tool(
     "review_issue_plan",
@@ -199,17 +221,24 @@ export function registerTools(server: McpServer, api?: ContractApi): void {
     z.object({ plan_id: id }).strict(),
     planReview,
     true,
-    (a) => get(`/projects/issue-plans/${encodeURIComponent(a.plan_id)}`),
+    async (a) =>
+      withReview(
+        await get(`/projects/issue-plans/${encodeURIComponent(a.plan_id)}`),
+      ),
   );
-  // No enlazar al /execute web: E04 no registra aún aprobación humana independiente para MCP.
+  // La API exige la aprobación web guardada; un argumento del modelo no la sustituye.
   tool(
     "execute_issue_plan",
-    "Contrato reservado: siempre bloqueado hasta E08. No admite confirmed ni registra aprobación.",
+    "Ejecuta una revisión aprobada en review_url. Si falta aprobación, no escribe. No admite confirmed. Reenvíos consultan el resultado guardado; resultados inciertos no se reintentan.",
     z.object({ plan_id: id }).strict(),
-    z.object({}),
+    writeResult,
     false,
-    async () => {
-      throw new ExecutionDisabled();
+    async (a) => {
+      if (api?.mode !== "autodesk") throw new ExecutionDisabled();
+      return api.request(
+        "POST",
+        `/projects/issue-plans/${encodeURIComponent(a.plan_id)}/execute`,
+      );
     },
   );
   tool(

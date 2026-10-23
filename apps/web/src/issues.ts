@@ -41,6 +41,8 @@ export type PlanReview = {
   id: string;
   state: string;
   expires_at: number;
+  content_digest?: string;
+  approved_at?: number | null;
   content: {
     project_name: string;
     project_id: string;
@@ -71,6 +73,9 @@ const messages: Record<string, string> = {
     "Esta revisión no pertenece a tu sesión o ya no está disponible.",
   plan_already_claimed:
     "El envío ya se inició. Consulta su resultado; no lo repitas.",
+  plan_changed_review_again:
+    "El contenido ha cambiado. Recarga y revisa antes de aprobar.",
+  human_approval_required: "La operación necesita aprobación en la web.",
   aps_issue_write_denied: "Autodesk ha denegado la escritura para esta cuenta.",
   aps_issue_payload_rejected:
     "Autodesk ha rechazado los datos. Revisa el formulario antes de preparar otro envío.",
@@ -148,6 +153,7 @@ type Responses = {
   detail: Issue;
   prepare: PlanReview;
   review: PlanReview;
+  approve: PlanReview;
   execute: WriteResult;
 };
 /** Usa la sesión local y CSRF para preparar/ejecutar; nunca reintenta escrituras. */
@@ -155,11 +161,11 @@ export async function issueRequest<K extends keyof Responses>(
   kind: K,
   path: string,
   signal?: AbortSignal,
-  body?: PlanInput,
+  body?: PlanInput | { content_digest: string },
   csrf?: string,
   fetcher: typeof fetch = fetch,
 ): Promise<Responses[K]> {
-  const write = kind === "prepare" || kind === "execute";
+  const write = kind === "prepare" || kind === "execute" || kind === "approve";
   const response = await fetcher(`/api/projects/${path}`, {
     credentials: "same-origin",
     method: write ? "POST" : "GET",
@@ -201,7 +207,8 @@ export async function issueRequest<K extends keyof Responses>(
           data.pagination && (data.pagination as Record<string, unknown>)[k],
         ),
       );
-  if (kind === "prepare" || kind === "review") valid = isPlanReview(data);
+  if (kind === "prepare" || kind === "review" || kind === "approve")
+    valid = isPlanReview(data);
   if (kind === "execute") valid = result(data);
   if (!valid) throw new Error("La respuesta de incidencias no es válida.");
   signal?.throwIfAborted();

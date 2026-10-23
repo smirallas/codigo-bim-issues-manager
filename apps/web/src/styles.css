@@ -163,3 +163,18 @@ input {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+.mcp-review {
+  margin-block: 2rem;
+  padding: 1.5rem;
+  border: 1px solid #c8d7ce;
+  overflow-wrap: anywhere;
+}
+.mcp-review pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.mcp-review label {
+  display: block;
+  margin-block: 1rem;
+}

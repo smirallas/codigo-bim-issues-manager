@@ -134,3 +134,10 @@ class PlanReview(BaseModel):
     state: str
     content: PlanContent
     result: WriteResult | None = None
+    content_digest: str = ""
+    approved_at: int | None = None
+
+
+class PlanApproval(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    content_digest: str = Field(pattern=r"^[a-f0-9]{64}$")

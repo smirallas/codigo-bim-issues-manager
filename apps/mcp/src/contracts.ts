@@ -60,7 +60,17 @@ export const planReview = z.object({
     hub_id: id,
     project_id: id,
     project_name: z.string(),
-    request: planInput,
+    // FastAPI conserva los campos opcionales como null en la revisión guardada.
+    // El esquema de entrada de prepare_issue sigue siendo estricto y separado.
+    request: planInput.extend({
+      issue_id: planInput.shape.issue_id.nullable(),
+      title: planInput.shape.title.nullable(),
+      description: planInput.shape.description.nullable(),
+      status: planInput.shape.status.nullable(),
+      subtype_id: planInput.shape.subtype_id.nullable(),
+      assignee_id: planInput.shape.assignee_id.nullable(),
+      due_date: planInput.shape.due_date.nullable(),
+    }),
     // Solo campos del contrato público, nunca cuerpos arbitrarios del proveedor.
     payload: z.object({
       title: z.string().optional(),
@@ -76,6 +86,12 @@ export const planReview = z.object({
     subtype_name: z.string().nullable(),
   }),
   result: writeResult.nullable(),
+  content_digest: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/)
+    .optional(),
+  approved_at: z.number().int().nullable().optional(),
+  review_url: z.string().url().optional(),
 });
 export const importReview = z.object({
   id,
@@ -99,6 +115,7 @@ export const importReview = z.object({
 /** Puerto de la API; la identidad viene del transporte, nunca de argumentos del modelo. */
 export interface ContractApi {
   readonly mode?: "autodesk";
+  readonly reviewOrigin?: string;
   request(
     method: "GET" | "POST",
     path: string,
@@ -112,7 +129,12 @@ export class ContractFailure extends Error {
       | "plan_expired"
       | "fixture_limit"
       | "authentication_required"
-      | "upstream_unavailable",
+      | "upstream_unavailable"
+      | "human_approval_required"
+      | "plan_changed_review_again"
+      | "issue_changed_review_again"
+      | "permission_denied"
+      | "invalid_api_response",
   ) {
     super(code);
   }

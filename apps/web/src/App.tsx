@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { checkApiHealth, type ApiStatus } from "./health";
 import { authMessages, disconnect, loadAuth, type AuthState } from "./auth";
 import { ProjectBrowser } from "./ProjectBrowser";
+import { McpPlanReview } from "./McpPlanReview";
 
 const statusText: Record<ApiStatus, string> = {
   loading: "Comprobando la API…",
@@ -11,6 +12,9 @@ const statusText: Record<ApiStatus, string> = {
 };
 
 export function App() {
+  const reviewPlan = new URLSearchParams(window.location.search).get(
+    "review_plan",
+  );
   const [status, setStatus] = useState<ApiStatus>("loading");
   const [auth, setAuth] = useState<AuthState>({ status: "loading" });
   const [busy, setBusy] = useState(false);
@@ -57,7 +61,7 @@ export function App() {
 
   return (
     <main>
-      <p className="eyebrow">Código BIM · E05</p>
+      <p className="eyebrow">Código BIM · E08</p>
       <h1>Issues Manager</h1>
       <aside aria-label="Aviso de demostración">
         <strong>Demostración técnica en desarrollo.</strong> Las operaciones
@@ -111,7 +115,12 @@ export function App() {
           </button>
         </section>
       )}
-      {auth.status === "authenticated" && <ProjectBrowser />}
+      {auth.status === "authenticated" &&
+        (reviewPlan ? (
+          <McpPlanReview key={reviewPlan} id={reviewPlan} />
+        ) : (
+          <ProjectBrowser />
+        ))}
       <p role="status">{statusText[status]}</p>
       <p>
         Puedes consultar incidencias, preparar una creación o actualización e

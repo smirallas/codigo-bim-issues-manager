@@ -4,7 +4,15 @@ from fastapi import APIRouter, Query, Request
 
 from app.auth.router import SESSION_COOKIE, auth_service
 from app.auth.service import AuthFailure
-from app.issues.schemas import Issue, IssuesPage, PlanInput, PlanReview, TypeOption, WriteResult
+from app.issues.schemas import (
+    Issue,
+    IssuesPage,
+    PlanApproval,
+    PlanInput,
+    PlanReview,
+    TypeOption,
+    WriteResult,
+)
 from app.issues.service import IssueService
 from app.projects.router import credentials, owner_session
 
@@ -70,4 +78,15 @@ def review(request: Request, plan_id: str) -> PlanReview:
 @router.post("/issue-plans/{plan_id}/execute", response_model=WriteResult)
 def execute(request: Request, plan_id: str) -> WriteResult:
     session_id, access = write_access(request)
-    return service(request).execute(session_id, access, plan_id)
+    return service(request).execute(
+        session_id, access, plan_id, require_approval=request.url.path.startswith("/mcp-api/")
+    )
+
+
+@router.post("/issue-plans/{plan_id}/approve", response_model=PlanReview)
+def approve(request: Request, plan_id: str, body: PlanApproval) -> PlanReview:
+    """La aprobación exige cookie, origen y CSRF web; el MCP no tiene esta ruta."""
+    if request.url.path.startswith("/mcp-api/"):
+        raise AuthFailure("web_approval_required", 403)
+    session_id, access = write_access(request)
+    return service(request).approve(session_id, access, plan_id, body.content_digest)

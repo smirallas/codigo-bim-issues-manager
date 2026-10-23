@@ -14,6 +14,7 @@ export interface ContextOptions {
   issuer: string;
   apiBaseUrl: string;
   internalSecret: string;
+  webOrigin?: string;
 }
 
 /** Credencial interna corta y de audiencia diferente: no propaga el bearer del cliente. */
@@ -54,11 +55,16 @@ export function authenticatedApi(
 ): ContractApi {
   return {
     mode: "autodesk",
+    reviewOrigin: options.webOrigin ?? "http://127.0.0.1:5173",
     async request(method, path, body) {
       if (
         !path.startsWith("/projects/") ||
         path.includes("..") ||
-        path.includes("/execute") ||
+        (path.includes("/execute") &&
+          !(
+            method === "POST" &&
+            /^\/projects\/issue-plans\/[A-Za-z0-9_.-]+\/execute$/.test(path)
+          )) ||
         path.includes("/approve")
       )
         throw new ContractFailure("resource_unavailable");
@@ -76,11 +82,27 @@ export function authenticatedApi(
             signal: AbortSignal.timeout(30000),
           },
         );
-        if (response.status === 401 || response.status === 403)
+        if (response.status === 401)
           throw new ContractFailure("authentication_required");
+        if (response.status === 403)
+          throw new ContractFailure("permission_denied");
         if (response.status === 404)
           throw new ContractFailure("resource_unavailable");
-        if (!response.ok) throw new ContractFailure("upstream_unavailable");
+        if (!response.ok) {
+          const failure = z
+            .object({
+              error: z.enum([
+                "human_approval_required",
+                "plan_changed_review_again",
+                "issue_changed_review_again",
+                "plan_expired",
+              ]),
+            })
+            .safeParse(await response.json());
+          throw new ContractFailure(
+            failure.success ? failure.data.error : "upstream_unavailable",
+          );
+        }
         return (await response.json()) as unknown;
       } catch (error) {
         if (error instanceof ContractFailure) throw error;
