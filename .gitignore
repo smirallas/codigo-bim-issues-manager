@@ -30,6 +30,7 @@
 !/docs/herramientas-mcp.md
 !/docs/autenticacion-mcp.md
 !/docs/operaciones-mcp.md
+!/docs/reproducir.md
 
 # Application sources, configuration and tests.
 /apps/*

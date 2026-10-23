@@ -62,3 +62,11 @@ Etiqueta `crear-incidencias-autodesk-codex`: cliente Codex por Streamable HTTP y
 Prueba real del 23 de octubre de 2026: Codex consultó Snowdon Towers, preparó una operación y Sergio aprobó su contenido en la web. Se creó una única incidencia sintética #3, cerrada, General / General y sin responsable. Relectura verificada y contraste visual en Autodesk. Un reenvío autorizado del mismo plan completado devolvió el resultado guardado y el mismo ID, sin otra creación. Una petición ambigua no preparó ni ejecutó nada. No se borró ni se publicó la incidencia.
 
 Pase final: 175 pruebas API, 54 web y 54 MCP (283 en total), formato, lint, tipos, builds, Docker y smoke correctos. Aprobación ausente, contenido alterado, permisos retirados, aislamiento y fallos inciertos se prueban con datos sintéticos. El ensayo real utiliza una identidad Autodesk y no demuestra todos los escenarios multiusuario. La caducidad absoluta web de E01 sigue pendiente. Esta versión funciona en local; no acredita un despliegue público.
+
+## Cierre reproducible de la serie
+
+Etiqueta `issues-manager-serie-completa`: README conciliado con las funciones verificadas, enlaces a las ocho versiones, guía de reproducción y límites, licencias de dependencias conservadas y título web sin numeración antigua. No añade operaciones de negocio ni cambia los permisos de Autodesk. Las etiquetas de los artículos se conservan sin moverse.
+
+Comprobación del 23 de octubre de 2026 desde una copia nueva descargada de GitHub, sin `.env`, bases ni credenciales heredadas: instalación con lockfiles, 283 pruebas y todos los checks correctos. Tres servicios Docker saludables en un proyecto Compose y volúmenes propios, con puertos loopback alternativos. Login cerrado sin APS y smoke de once herramientas con ejecución bloqueada. Tras generar claves nuevas se comprobó que una segunda invocación conserva la configuración, y pasó el smoke del modo fixtures sin llamadas Autodesk.
+
+Parada y arranque de esa instalación con `down` y `up`, conservando sus volúmenes: marcador local de prueba y migración `0004_plan_approval` presentes, cero planes de incidencias y smoke correcto. Se usaron cachés de construcción de Docker; no se acredita una compilación sin caché ni una segunda integración real con Autodesk. El cierre es local y no incluye alojamiento público. [Reproducir la solución](reproducir.md).

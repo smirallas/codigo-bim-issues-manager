@@ -1,6 +1,6 @@
 # Ensayar herramientas MCP sobre la API
 
-Esta guía describe el ensayo sintético de once contratos por Streamable HTTP con el SDK MCP 1.30.0. Su modo `fixtures` no autentica al cliente ni consulta Autodesk. La versión actual también ofrece el modo `autodesk`: consulta [la guía de autenticación MCP](autenticacion-mcp.md) para configurarlo. La web conserva su login y sus operaciones reales.
+Esta guía describe exclusivamente el ensayo sintético de once contratos por Streamable HTTP con el SDK MCP 1.30.0. Su modo `fixtures` no autentica al cliente ni consulta Autodesk. La versión actual también ofrece el modo `autodesk`: consulta [la guía de autenticación MCP](autenticacion-mcp.md) y las [operaciones desde Codex](operaciones-mcp.md). Los bloqueos descritos aquí corresponden al ensayo sintético; en modo Autodesk se permite ejecutar un plan individual previamente aprobado en la web.
 
 ## Arrancar el ensayo
 
@@ -52,7 +52,7 @@ Las salidas se validan con Zod, se reducen a los campos públicos definidos y se
 
 Las preparaciones sintéticas duran diez minutos, se guardan solo en memoria y tienen un límite de cien vigentes. Se pierden al reiniciar y son compartidas por quienes accedan al mismo proceso de ensayo: no acreditan aislamiento de usuarios. La persistencia cifrada de la web sigue en FastAPI.
 
-La ejecución devuelve `human_approval_not_available` sin llamar a la API. El endpoint web actual ejecuta tras su confirmación web, pero no conserva una aprobación independiente verificable para MCP. No debe conectarse directamente ni sustituirse por un booleano del modelo. La autenticación corresponde a la siguiente entrega; la aprobación y el recorrido con agente se completarán después. Tampoco se añade una subida de Excel por MCP.
+En fixtures, la ejecución devuelve `human_approval_not_available` sin llamar a la API. La versión de autenticación y aprobación real utiliza otro recorrido: sesión propietaria, aprobación web sobre la huella del contenido y ejecución individual con revalidación. Un booleano del modelo no sustituye esa aprobación. El ensayo sintético conserva el bloqueo para no confundir una demostración con una escritura real. No se añade una subida de Excel por MCP.
 
 ## Verificar
 

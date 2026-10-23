@@ -1,6 +1,6 @@
 # Issues Manager · Código BIM
 
-Ejemplo educativo de la serie de Código BIM sobre las APIs de Autodesk Forma y la gestión de incidencias. React/TypeScript, FastAPI/Python y una base MCP por Streamable HTTP. El MCP ofrece autorización propia del cliente, vinculada a la conexión Autodesk individual de FastAPI. El recorrido con un agente y la ejecución MCP siguen pendientes.
+Ejemplo educativo de la serie de Código BIM sobre las APIs de Autodesk Forma y la gestión de incidencias. React/TypeScript, FastAPI/Python y MCP por Streamable HTTP. Codex consulta y prepara operaciones con su propia autorización MCP, vinculada a la conexión Autodesk individual de FastAPI. La persona revisa y aprueba el contenido en la web antes de que el agente pueda ejecutar una incidencia individual.
 
 ## Código completo de cada artículo
 
@@ -27,6 +27,10 @@ Importar incidencias desde Excel con Autodesk Issues API → [importar-incidenci
 
 Autenticar el cliente MCP con tu cuenta Autodesk → [autenticar-cliente-mcp-autodesk](https://github.com/smirallas/codigo-bim-issues-manager/tree/autenticar-cliente-mcp-autodesk).
 
+Diseñar herramientas MCP sobre una API con FastAPI → [disenar-herramientas-mcp-fastapi](https://github.com/smirallas/codigo-bim-issues-manager/tree/disenar-herramientas-mcp-fastapi).
+
+Crear incidencias en Autodesk desde Codex con aprobación humana → [crear-incidencias-autodesk-codex](https://github.com/smirallas/codigo-bim-issues-manager/tree/crear-incidencias-autodesk-codex).
+
 ## Qué puedes hacer con esta versión
 
 - Iniciar sesión con tu cuenta Autodesk mediante OAuth 3-legged y PKCE, con `user-profile:read`, `data:read`, `account:read` y `data:write`.
@@ -39,6 +43,7 @@ Autenticar el cliente MCP con tu cuenta Autodesk → [autenticar-cliente-mcp-aut
 - Importar una plantilla Excel de hasta 25 filas: validar, revisar, aprobar las filas válidas y recuperar resultados sin reenviar las ya procesadas.
 - Revisar una preparación inmutable durante diez minutos antes de confirmar su envío. Se revalidan contexto, permisos y datos; el resultado queda guardado y el mismo plan no vuelve a escribir.
 - Autorizar un cliente MCP mediante OAuth, PKCE y consentimiento; consultar datos y preparar revisiones con su propia conexión Autodesk.
+- Ejecutar desde Codex una incidencia individual previamente aprobada en la web sobre su contenido exacto y recuperar el resultado guardado.
 - Ejecutar pruebas sin credenciales reales y ensayar los contratos MCP con datos sintéticos.
 
 Esta versión incorpora operaciones individuales con Issues API e importación desde una plantilla Excel. Las etiquetas anteriores conservan su alcance. El MCP expone once herramientas. El modo predeterminado `disabled` bloquea las llamadas y `fixtures` usa solo datos sintéticos. En `autodesk`, exige una credencial propia de quince minutos antes de consultar datos; FastAPI revalida la conexión individual y la lista de acceso. La ejecución individual desde MCP exige una aprobación independiente del contenido exacto en la web autenticada. No incluye adjuntos, pushpins, visor, campos personalizados ni eliminación. La actualización de responsable queda fuera; al crear, si se elige uno, se resuelve por identidad Autodesk y se revalida su empresa cuando corresponde.
@@ -105,6 +110,12 @@ Se adaptan patrones de un proyecto propio, DataForge: conexión individual, canj
 ## Licencia
 
 [MIT](LICENSE), Copyright 2026 Sergio Mirallas. Las cuentas y servicios Autodesk requieren su propia configuración y condiciones; este repositorio no concede acceso a proyectos de terceros.
+
+Las dependencias conservan sus propias licencias y avisos, distribuidos con cada paquete; la licencia MIT del ejemplo no los sustituye. Los lockfiles identifican las versiones. No se redistribuye código de DataForge ni material del portal Autodesk.
+
+## Reproducir y cerrar la serie
+
+La [guía de reproducción](docs/reproducir.md) separa el arranque sin credenciales, el ensayo sintético y la conexión real a Autodesk. Incluye el uso de datos persistentes, recuperación de resultados y límites antes de plantear un despliegue. Para retomar el punto de un artículo, utiliza siempre su etiqueta; el cierre reproducible se identifica como `issues-manager-serie-completa`.
 
 ## Herramientas MCP
 
