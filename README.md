@@ -119,4 +119,8 @@ La [guía de reproducción](docs/reproducir.md) separa el arranque sin credencia
 
 ## Herramientas MCP
 
+Ampliación opcional: [preparar passthrough billing](docs/passthrough-billing.md) añade la selección de contexto al inicio OAuth para aplicaciones elegibles. Está desactivada por defecto y no acredita facturación al cliente ni completa su incorporación en Autodesk.
+
+Código del caso práctico: [preparar-passthrough-billing-autodesk-aps](https://github.com/smirallas/codigo-bim-issues-manager/tree/preparar-passthrough-billing-autodesk-aps). Las etiquetas anteriores de la serie conservan su configuración original.
+
 [Autorización y configuración del cliente](docs/autenticacion-mcp.md): credenciales MCP separadas de APS, descubrimiento OAuth, cliente preinscrito, consentimiento y contexto interno validado por FastAPI. El cliente SDK local está en `/client` solo en modo `autodesk`. La guía de [operaciones desde Codex](docs/operaciones-mcp.md) configura su cliente OAuth y explica la revisión web independiente antes de ejecutar. El [ensayo sintético de contratos](docs/herramientas-mcp.md) sigue disponible en modo `fixtures`, sin escrituras Autodesk.

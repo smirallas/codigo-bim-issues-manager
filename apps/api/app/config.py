@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     aps_callback_url: str = Field(
         default="http://127.0.0.1:8000/auth/autodesk/callback", validation_alias="APS_CALLBACK_URL"
     )
+    aps_select_usage_context: bool = Field(
+        default=False, validation_alias="APS_SELECT_USAGE_CONTEXT"
+    )
     web_origin: str = Field(default="http://127.0.0.1:5173", validation_alias="WEB_ORIGIN")
     access_allowed_emails: str = Field(default="", validation_alias="ACCESS_ALLOWED_EMAILS")
     access_allowed_domains: str = Field(default="", validation_alias="ACCESS_ALLOWED_DOMAINS")

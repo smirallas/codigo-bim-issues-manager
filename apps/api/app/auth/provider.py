@@ -52,9 +52,11 @@ class AutodeskProvider:
 
     def authorization_url(self, state: str, verifier: str) -> str:
         """Authlib construye la petición 3-legged con PKCE; el secreto nunca va a la URL."""
+        # Solo una aplicación preparada para passthrough debe pedir el contexto de consumo.
+        prompt = "select_usage_context" if self.settings.aps_select_usage_context else "login"
         with self._client() as client:
             url, _ = client.create_authorization_url(
-                AUTHORIZE_URL, state=state, code_verifier=verifier, prompt="login"
+                AUTHORIZE_URL, state=state, code_verifier=verifier, prompt=prompt
             )
         return cast(str, url)
 

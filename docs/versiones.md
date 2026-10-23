@@ -2,6 +2,10 @@
 
 Actualización de aceptación: Sergio confirma manualmente el 23 de octubre de 2026 que caduca la sesión web de E01. Las menciones a esa comprobación como pendiente dentro de entregas anteriores describen su estado histórico. Las etiquetas publicadas conservan sus instantáneas; esta confirmación no cambia su código ni mide un nuevo intervalo exacto de ocho horas.
 
+Ampliación práctica de passthrough: etiqueta `preparar-passthrough-billing-autodesk-aps`. Añade `APS_SELECT_USAGE_CONTEXT`, desactivado por defecto, para solicitar `prompt=select_usage_context` conservando PKCE, callback, scopes y controles de acceso. Canje y renovación no incorporan parámetros nuevos de facturación. Los errores no reintentan silenciosamente sin contexto. [Preparación y límites](passthrough-billing.md).
+
+Verificación del 23 de octubre de 2026: 180 pruebas API, 54 web y 54 MCP (288), formato/lint/tipos/builds, Docker y smoke correctos. Sergio inicia y acepta personalmente la transición permanente en Autodesk; el portal muestra In transition y la incorporación del cliente aún no disponible. API local con opción activa y nuevo login real correcto, sin selector de contexto observado. No se completa la transición, no se crea consumo de prueba en una API de pago ni se acredita financiación o facturación al cliente. El cambio del portal no puede deshacerse cambiando una variable local.
+
 Cada etiqueta anotada e inmutable conserva el código completo al terminar un artículo. `main` puede avanzar; el enlace del artículo debe apuntar a `/tree/<etiqueta>`.
 
 | Artículo                                                    | Etiqueta                                                                                                                                                         | Contenido                                                                                   |

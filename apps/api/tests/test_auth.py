@@ -143,6 +143,57 @@ def test_login_uses_minimal_read_scopes_pkce_and_browser_bound_state(auth) -> No
         ]
 
 
+@pytest.mark.parametrize("select_context", [False, True])
+def test_usage_context_prompt_preserves_pkce_scopes_and_callback(
+    auth, select_context: bool
+) -> None:
+    client, provider, settings = auth
+    settings.aps_select_usage_context = select_context
+    response = client.get("/auth/login", follow_redirects=False)
+    params = parse_qs(urlsplit(response.headers["location"]).query)
+    assert params["prompt"] == ["select_usage_context" if select_context else "login"]
+    assert params["scope"] == [APS_SCOPE]
+    assert params["code_challenge_method"] == ["S256"]
+    assert params["redirect_uri"] == [settings.aps_callback_url]
+    assert "client_secret" not in params
+    assert provider.requests == []
+
+
+@pytest.mark.parametrize("error", ["access_denied", "invalid_request"])
+def test_usage_context_error_does_not_exchange_tokens_or_fallback(auth, error: str) -> None:
+    client, provider, settings = auth
+    settings.aps_select_usage_context = True
+    state = begin(client)
+    response = client.get(
+        "/auth/autodesk/callback",
+        params={"state": state, "error": error, "error_description": "untrusted-context"},
+        follow_redirects=False,
+    )
+    assert "auth_error=" in response.headers["location"]
+    assert "untrusted-context" not in response.text + str(response.headers)
+    assert provider.requests == []
+    assert SESSION_COOKIE not in client.cookies
+    with Session(client.app.state.database_engine) as db:
+        assert db.scalar(select(WebSession)) is None
+        assert db.scalar(select(AutodeskConnection)) is None
+        assert db.get(OAuthAttempt, fingerprint(state)) is None
+    assert "invalid_callback" in finish(client, state).headers["location"]
+
+
+def test_usage_context_grant_uses_standard_exchange_and_refresh(auth) -> None:
+    client, provider, settings = auth
+    settings.aps_select_usage_context = True
+    login(client)
+    with Session(client.app.state.database_engine) as db, db.begin():
+        db.execute(update(AutodeskConnection).values(expires_at=0))
+    assert client.get("/auth/session").status_code == 200
+    assert provider.refreshes == 1
+    token_requests = [r for r in provider.requests if r.url.path.endswith("/token")]
+    assert len(token_requests) == 2
+    assert all("prompt" not in parse_qs(r.content.decode()) for r in token_requests)
+    assert all("usage_context" not in parse_qs(r.content.decode()) for r in token_requests)
+
+
 def test_success_exposes_only_session_identity_and_encrypts_credentials(auth) -> None:
     client, _, settings = auth
     state = begin(client)
