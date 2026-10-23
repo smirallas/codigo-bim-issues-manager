@@ -1,5 +1,7 @@
 # Versiones de los artículos
 
+Actualización de aceptación: Sergio confirma manualmente el 23 de octubre de 2026 que caduca la sesión web de E01. Las menciones a esa comprobación como pendiente dentro de entregas anteriores describen su estado histórico. Las etiquetas publicadas conservan sus instantáneas; esta confirmación no cambia su código ni mide un nuevo intervalo exacto de ocho horas.
+
 Cada etiqueta anotada e inmutable conserva el código completo al terminar un artículo. `main` puede avanzar; el enlace del artículo debe apuntar a `/tree/<etiqueta>`.
 
 | Artículo                                                    | Etiqueta                                                                                                                                                         | Contenido                                                                                   |
@@ -7,7 +9,7 @@ Cada etiqueta anotada e inmutable conserva el código completo al terminar un ar
 | Login con Autodesk en FastAPI: sesión y acceso restringido  | [login-autodesk-fastapi](https://github.com/smirallas/codigo-bim-issues-manager/tree/login-autodesk-fastapi)                                                     | Base local y login Autodesk con acceso restringido, sesión, renovación y desconexión.       |
 | Consultar tus proyectos de Autodesk con Data Management API | [consultar-proyectos-autodesk-data-management-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/consultar-proyectos-autodesk-data-management-api) | Hubs y proyectos ACC/Forma accesibles, paginación, avisos y selección validada en servidor. |
 
-El login, la identidad, la denegación, la cancelación, la desconexión y la renovación se han observado con APS real. La caducidad absoluta de ocho horas queda pendiente de comprobación manual. Las pruebas automatizadas cubren la caducidad con datos sintéticos; no sustituyen esa comprobación real.
+El login, la identidad, la denegación, la cancelación, la desconexión y la renovación se han observado con APS real. El 23 de octubre de 2026 Sergio confirma manualmente que la sesión de E01 caduca. Esta confirmación cierra la aceptación manual pendiente; no aporta instantes de inicio y rechazo para medir de nuevo las ocho horas exactas. Las pruebas automatizadas cubren la caducidad con datos sintéticos y son una evidencia distinta.
 
 La consulta y selección de un proyecto de ejemplo se han comprobado con APS real, después de habilitar la integración en la cuenta. Una petición directa con un identificador ficticio ha recibido 404. Los casos de vacío definitivo, denegación 403 y paginación se prueban con datos sintéticos; esa prueba no acredita todos los escenarios posibles en Autodesk.
 

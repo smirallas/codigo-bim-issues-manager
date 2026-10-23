@@ -56,6 +56,6 @@ Una operación completada devuelve el resultado guardado al reenviar el mismo pl
 
 Solo puertos loopback y desarrollo local con `vite preview`. No se ha preparado alojamiento público. Antes de alojar la aplicación habría que comprobar HTTPS, cookies seguras, callbacks, emisores y audiencias OAuth, orígenes, restricción de acceso, protección de claves, copias y operación del almacenamiento. Cambiar la URL por sí solo no completa ese trabajo.
 
-No incluye visor, adjuntos, pushpins, campos personalizados, borrado, actualización de responsable ni ejecución de lotes Excel desde MCP. La prueba real del agente utilizó una identidad Autodesk; las pruebas multiusuario sintéticas no equivalen a una aceptación real con dos cuentas. La caducidad absoluta de la sesión web mantiene su comprobación real pendiente.
+No incluye visor, adjuntos, pushpins, campos personalizados, borrado, actualización de responsable ni ejecución de lotes Excel desde MCP. La prueba real del agente utilizó una identidad Autodesk; las pruebas multiusuario sintéticas no equivalen a una aceptación real con dos cuentas. Sergio ha confirmado manualmente que la sesión web de E01 caduca; no se dispone de una nueva traza con los instantes de inicio y rechazo para medir el plazo exacto.
 
 La licencia MIT cubre el código propio del ejemplo. Cada dependencia conserva su licencia y sus avisos dentro del paquete instalado; al redistribuir paquetes o imágenes, conserva esos textos. Las condiciones de Autodesk y de los clientes externos siguen siendo independientes.
