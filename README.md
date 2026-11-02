@@ -19,6 +19,7 @@ Cada etiqueta conserva el código tal como queda al terminar un artículo. `main
 | 8 | [Crear incidencias en Autodesk desde Codex con aprobación humana](https://codigobim.com/crear-incidencias-autodesk-codex/) | [crear-incidencias-autodesk-codex](https://github.com/smirallas/codigo-bim-issues-manager/tree/crear-incidencias-autodesk-codex) |
 | Cierre reproducible local | Ocho entregas completas | [issues-manager-serie-completa](https://github.com/smirallas/codigo-bim-issues-manager/tree/issues-manager-serie-completa) · [Guía de reproducción](https://github.com/smirallas/codigo-bim-issues-manager/blob/issues-manager-serie-completa/docs/reproducir.md) |
 | Ampliación complementaria | [Preparar passthrough billing en Autodesk APS con Issues Manager](https://codigobim.com/preparar-passthrough-billing-autodesk-aps/) | [preparar-passthrough-billing-autodesk-aps](https://github.com/smirallas/codigo-bim-issues-manager/tree/preparar-passthrough-billing-autodesk-aps) |
+| Cierre editorial (sin numerar) | [¿Hace falta desarrollar un backend propio para trabajar con Autodesk APS?](https://codigobim.com/hace-falta-desarrollar-un-backend-propio-para-trabajar-con-autodesk-aps/) | [issues-manager-serie-completa](https://github.com/smirallas/codigo-bim-issues-manager/tree/issues-manager-serie-completa) · [Guía de reproducción](https://github.com/smirallas/codigo-bim-issues-manager/blob/issues-manager-serie-completa/docs/reproducir.md) |
 
 ```powershell
 git clone https://github.com/smirallas/codigo-bim-issues-manager.git
