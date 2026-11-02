@@ -8,10 +8,19 @@ Verificación del 23 de octubre de 2026: 180 pruebas API, 54 web y 54 MCP (288),
 
 Cada etiqueta anotada e inmutable conserva el código completo al terminar un artículo. `main` puede avanzar; el enlace del artículo debe apuntar a `/tree/<etiqueta>`.
 
-| Artículo                                                    | Etiqueta                                                                                                                                                         | Contenido                                                                                   |
-| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Login con Autodesk en FastAPI: sesión y acceso restringido  | [login-autodesk-fastapi](https://github.com/smirallas/codigo-bim-issues-manager/tree/login-autodesk-fastapi)                                                     | Base local y login Autodesk con acceso restringido, sesión, renovación y desconexión.       |
-| Consultar tus proyectos de Autodesk con Data Management API | [consultar-proyectos-autodesk-data-management-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/consultar-proyectos-autodesk-data-management-api) | Hubs y proyectos ACC/Forma accesibles, paginación, avisos y selección validada en servidor. |
+| Orden | Artículo | Código al terminarlo |
+| --- | --- | --- |
+| Introducción | [De un Excel a Issues Manager: por qué estoy reconstruyendo esta herramienta](https://codigobim.com/de-un-excel-a-issues-manager-por-que-estoy-reconstruyendo-esta-herramienta/) | [Índice de versiones](docs/versiones.md); sin etiqueta anterior al login |
+| 1 | [Login con Autodesk en FastAPI: sesión y acceso restringido](https://codigobim.com/login-con-autodesk-en-fastapi-sesion-y-acceso-restringido/) | [login-autodesk-fastapi](https://github.com/smirallas/codigo-bim-issues-manager/tree/login-autodesk-fastapi) |
+| 2 | [Consultar tus proyectos de Autodesk con Data Management API](https://codigobim.com/consultar-tus-proyectos-de-autodesk-con-data-management-api/) | [consultar-proyectos-autodesk-data-management-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/consultar-proyectos-autodesk-data-management-api) |
+| 3 | [Miembros y permisos de Autodesk: comprobar responsables con Issues API](https://codigobim.com/miembros-permisos-autodesk-issues-api/) | [miembros-permisos-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/miembros-permisos-autodesk-issues-api) |
+| 4 | [Crear y actualizar incidencias de Autodesk con Issues API](https://codigobim.com/crear-actualizar-incidencias-autodesk-issues-api/) | [crear-actualizar-incidencias-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/crear-actualizar-incidencias-autodesk-issues-api) |
+| 5 | [Importar incidencias desde Excel con Autodesk Issues API](https://codigobim.com/importar-incidencias-excel-autodesk-issues-api/) | [importar-incidencias-excel-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/importar-incidencias-excel-autodesk-issues-api) |
+| 6 | [Diseñar herramientas MCP sobre una API con FastAPI](https://codigobim.com/disenar-herramientas-mcp-fastapi/) | [disenar-herramientas-mcp-fastapi](https://github.com/smirallas/codigo-bim-issues-manager/tree/disenar-herramientas-mcp-fastapi) |
+| 7 | [Autenticar el cliente MCP con tu cuenta Autodesk](https://codigobim.com/autenticar-cliente-mcp-autodesk/) | [autenticar-cliente-mcp-autodesk](https://github.com/smirallas/codigo-bim-issues-manager/tree/autenticar-cliente-mcp-autodesk) |
+| 8 | [Crear incidencias en Autodesk desde Codex con aprobación humana](https://codigobim.com/crear-incidencias-autodesk-codex/) | [crear-incidencias-autodesk-codex](https://github.com/smirallas/codigo-bim-issues-manager/tree/crear-incidencias-autodesk-codex) |
+| Cierre reproducible local | Ocho entregas completas | [issues-manager-serie-completa](https://github.com/smirallas/codigo-bim-issues-manager/tree/issues-manager-serie-completa) · [Guía de reproducción](https://github.com/smirallas/codigo-bim-issues-manager/blob/issues-manager-serie-completa/docs/reproducir.md) |
+| Ampliación complementaria | [Preparar passthrough billing en Autodesk APS con Issues Manager](https://codigobim.com/preparar-passthrough-billing-autodesk-aps/) | [preparar-passthrough-billing-autodesk-aps](https://github.com/smirallas/codigo-bim-issues-manager/tree/preparar-passthrough-billing-autodesk-aps) |
 
 El login, la identidad, la denegación, la cancelación, la desconexión y la renovación se han observado con APS real. El 23 de octubre de 2026 Sergio confirma manualmente que la sesión de E01 caduca. Esta confirmación cierra la aceptación manual pendiente; no aporta instantes de inicio y rechazo para medir de nuevo las ocho horas exactas. Las pruebas automatizadas cubren la caducidad con datos sintéticos y son una evidencia distinta.
 
@@ -37,7 +46,7 @@ git switch -c mi-prueba-login
 
 No mover ni reutilizar una etiqueta publicada. Una corrección posterior que cambie el código enlazado recibirá otra etiqueta, por ejemplo `login-autodesk-fastapi-v2`, y el artículo se actualizará para enlazarla.
 
-Los siguientes artículos utilizarán nombres descriptivos cuando exista su código. No se crean versiones anticipadas ni una etiqueta retrospectiva de la base anterior al login: no se conserva una instantánea verificable de esa etapa.
+Las ocho entregas y la ampliación complementaria utilizan las etiquetas descriptivas del índice. No se añade una etiqueta retrospectiva de la base anterior al login: no se conserva una instantánea verificable de esa etapa.
 
 ## Importar incidencias desde Excel
 
