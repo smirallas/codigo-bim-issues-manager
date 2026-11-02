@@ -6,10 +6,19 @@ Ejemplo educativo de la serie de Código BIM sobre las APIs de Autodesk Forma y 
 
 Cada etiqueta conserva el código tal como queda al terminar un artículo. `main` contiene el trabajo más reciente; para seguir un artículo, utiliza la etiqueta que lleva su nombre.
 
-| Artículo                                                    | Código completo al terminarlo                                                                                                                                    |
-| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Login con Autodesk en FastAPI: sesión y acceso restringido  | [login-autodesk-fastapi](https://github.com/smirallas/codigo-bim-issues-manager/tree/login-autodesk-fastapi)                                                     |
-| Consultar tus proyectos de Autodesk con Data Management API | [consultar-proyectos-autodesk-data-management-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/consultar-proyectos-autodesk-data-management-api) |
+| Orden | Artículo | Código al terminarlo |
+| --- | --- | --- |
+| Introducción | [De un Excel a Issues Manager: por qué estoy reconstruyendo esta herramienta](https://codigobim.com/de-un-excel-a-issues-manager-por-que-estoy-reconstruyendo-esta-herramienta/) | [Índice de versiones](docs/versiones.md); sin etiqueta anterior al login |
+| 1 | [Login con Autodesk en FastAPI: sesión y acceso restringido](https://codigobim.com/login-con-autodesk-en-fastapi-sesion-y-acceso-restringido/) | [login-autodesk-fastapi](https://github.com/smirallas/codigo-bim-issues-manager/tree/login-autodesk-fastapi) |
+| 2 | [Consultar tus proyectos de Autodesk con Data Management API](https://codigobim.com/consultar-tus-proyectos-de-autodesk-con-data-management-api/) | [consultar-proyectos-autodesk-data-management-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/consultar-proyectos-autodesk-data-management-api) |
+| 3 | [Miembros y permisos de Autodesk: comprobar responsables con Issues API](https://codigobim.com/miembros-permisos-autodesk-issues-api/) | [miembros-permisos-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/miembros-permisos-autodesk-issues-api) |
+| 4 | [Crear y actualizar incidencias de Autodesk con Issues API](https://codigobim.com/crear-actualizar-incidencias-autodesk-issues-api/) | [crear-actualizar-incidencias-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/crear-actualizar-incidencias-autodesk-issues-api) |
+| 5 | [Importar incidencias desde Excel con Autodesk Issues API](https://codigobim.com/importar-incidencias-excel-autodesk-issues-api/) | [importar-incidencias-excel-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/importar-incidencias-excel-autodesk-issues-api) |
+| 6 | [Diseñar herramientas MCP sobre una API con FastAPI](https://codigobim.com/disenar-herramientas-mcp-fastapi/) | [disenar-herramientas-mcp-fastapi](https://github.com/smirallas/codigo-bim-issues-manager/tree/disenar-herramientas-mcp-fastapi) |
+| 7 | [Autenticar el cliente MCP con tu cuenta Autodesk](https://codigobim.com/autenticar-cliente-mcp-autodesk/) | [autenticar-cliente-mcp-autodesk](https://github.com/smirallas/codigo-bim-issues-manager/tree/autenticar-cliente-mcp-autodesk) |
+| 8 | [Crear incidencias en Autodesk desde Codex con aprobación humana](https://codigobim.com/crear-incidencias-autodesk-codex/) | [crear-incidencias-autodesk-codex](https://github.com/smirallas/codigo-bim-issues-manager/tree/crear-incidencias-autodesk-codex) |
+| Cierre reproducible local | Ocho entregas completas | [issues-manager-serie-completa](https://github.com/smirallas/codigo-bim-issues-manager/tree/issues-manager-serie-completa) · [Guía de reproducción](https://github.com/smirallas/codigo-bim-issues-manager/blob/issues-manager-serie-completa/docs/reproducir.md) |
+| Ampliación complementaria | [Preparar passthrough billing en Autodesk APS con Issues Manager](https://codigobim.com/preparar-passthrough-billing-autodesk-aps/) | [preparar-passthrough-billing-autodesk-aps](https://github.com/smirallas/codigo-bim-issues-manager/tree/preparar-passthrough-billing-autodesk-aps) |
 
 ```powershell
 git clone https://github.com/smirallas/codigo-bim-issues-manager.git
@@ -17,19 +26,7 @@ cd codigo-bim-issues-manager
 git switch --detach login-autodesk-fastapi
 ```
 
-La etiqueta identifica una versión reproducible del código, no una certificación de producción. [Versiones y comprobaciones](docs/versiones.md).
-
-Miembros y permisos de Autodesk: comprobar responsables con Issues API → [miembros-permisos-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/miembros-permisos-autodesk-issues-api).
-
-Crear y actualizar incidencias de Autodesk con Issues API → [crear-actualizar-incidencias-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/crear-actualizar-incidencias-autodesk-issues-api).
-
-Importar incidencias desde Excel con Autodesk Issues API → [importar-incidencias-excel-autodesk-issues-api](https://github.com/smirallas/codigo-bim-issues-manager/tree/importar-incidencias-excel-autodesk-issues-api).
-
-Autenticar el cliente MCP con tu cuenta Autodesk → [autenticar-cliente-mcp-autodesk](https://github.com/smirallas/codigo-bim-issues-manager/tree/autenticar-cliente-mcp-autodesk).
-
-Diseñar herramientas MCP sobre una API con FastAPI → [disenar-herramientas-mcp-fastapi](https://github.com/smirallas/codigo-bim-issues-manager/tree/disenar-herramientas-mcp-fastapi).
-
-Crear incidencias en Autodesk desde Codex con aprobación humana → [crear-incidencias-autodesk-codex](https://github.com/smirallas/codigo-bim-issues-manager/tree/crear-incidencias-autodesk-codex).
+Para reproducir el cierre local de las ocho entregas, utiliza `issues-manager-serie-completa` y su [guía de reproducción](docs/reproducir.md). El código de cada capítulo es público y se enlaza directamente desde el artículo, sin requerir suscripción. Las etiquetas conservan su alcance histórico; no certifican preparación para producción. [Versiones y comprobaciones](docs/versiones.md).
 
 ## Qué puedes hacer con esta versión
 
